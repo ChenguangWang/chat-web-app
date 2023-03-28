@@ -167,7 +167,7 @@ header {
 .md-editor {
   --md-bk-color: transparent;
 }
-::v-deep .default-theme p {
+:deep .default-theme p {
   line-height: inherit;
   margin: 0;
   padding: 0;
