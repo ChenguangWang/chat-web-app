@@ -12,15 +12,16 @@
             <img :src="message.avatar" alt="avatar" />
           </div>
           <div class="message-body">
-            <!-- <div class="message-author">{{ message.author }}</div> -->
-            <div class="message-text">{{ message.text }}</div>
+            <!-- <div class="message-text">{{ message.text }}</div> -->
+            <MdEditor v-model="message.text" previewOnly />
           </div>
         </li>
+        <li style="clear: both; margin: 0"></li>
       </ul>
     </section>
     <section class="send-wrap">
       <!-- @pressEnter 回车回调 -->
-      <a-textarea v-model:value="newMessage" @pressEnter="sendMessage" />
+      <a-textarea v-model:value="newMessage" />
       <a-button class="send-btn" type="primary" shape="round" @click="sendMessage">
         <template #icon>
           <send-outlined />
@@ -32,12 +33,15 @@
 </template>
 
 <script>
+import MdEditor from 'md-editor-v3'
+import 'md-editor-v3/lib/style.css'
 import { SendOutlined } from '@ant-design/icons-vue'
 import { reactive, onMounted, onBeforeUnmount, ref } from 'vue'
 
 export default {
   components: {
-    SendOutlined
+    SendOutlined,
+    MdEditor
   },
   setup() {
     const systemAvatar = '/src/assets/logo.jpg'
@@ -111,7 +115,7 @@ header {
         float: right;
         .message-body {
           color: #fff;
-          background-color: #0084ff;
+          background-color: #19be6b;
         }
         .message-avatar {
           text-align: right;
@@ -138,10 +142,6 @@ header {
           box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.05);
         }
       }
-      .message-author {
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
       .message-text {
         font-size: 14px;
       }
@@ -162,5 +162,14 @@ header {
     bottom: 12px;
     right: 36px;
   }
+}
+
+.md-editor {
+  --md-bk-color: transparent;
+}
+::v-deep .default-theme p {
+  line-height: inherit;
+  margin: 0;
+  padding: 0;
 }
 </style>
