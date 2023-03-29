@@ -19,6 +19,11 @@ const router = createRouter({
           path: 'chat',
           name: 'chat',
           component: () => import('@/views/chat/Chat.vue')
+        },
+        {
+          path: 'upgrade',
+          name: 'upgrade',
+          component: () => import('@/views/upgrade/Upgrade.vue')
         }
       ]
     },

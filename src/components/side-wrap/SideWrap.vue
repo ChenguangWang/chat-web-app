@@ -23,7 +23,7 @@
     </div>
     <div class="option-wrap">
       <div class="option-wrap-item"><clear-outlined /><span class="btn-text">清除会话</span></div>
-      <div class="option-wrap-item">
+      <div class="option-wrap-item" @click="routerChange('upgrade')">
         <account-book-outlined /><span class="btn-text">升级功能</span>
       </div>
       <div class="option-wrap-item"><logout-outlined /><span class="btn-text">退出登录</span></div>
