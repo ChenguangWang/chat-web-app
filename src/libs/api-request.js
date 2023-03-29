@@ -60,7 +60,7 @@ class HttpRequest {
 
 let baseURLMap = {
   // 开发
-  development: '/test/api',
+  development: '/api',
   // 正式版
   production: '/api'
 }

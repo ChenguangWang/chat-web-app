@@ -25,8 +25,8 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      '/test/api': {
-        target: 'https://hi-chat.info', // 代理的目标地址
+      '/api': {
+        target: 'http://123.56.7.73:8081', // 代理的目标地址
         ws: false,
         changeOrigin: true
       }
