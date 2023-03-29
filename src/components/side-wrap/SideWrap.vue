@@ -13,7 +13,7 @@
           <template #icon><UserOutlined /></template>
         </a-avatar>
         <br />
-        <a-button class="login-btn" type="text">点击登录</a-button>
+        <a-button class="login-btn" type="text" @click="routerChange('login')">点击登录</a-button>
       </div>
     </div>
     <div class="session-wrap">
@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { useRouter } from 'vue-router'
 import {
   UserOutlined,
   PlusOutlined,
@@ -46,6 +47,15 @@ export default {
     ClearOutlined,
     AccountBookOutlined,
     LogoutOutlined
+  },
+  setup() {
+    const router = useRouter()
+    const routerChange = (name) => {
+      router.push(name)
+    }
+    return {
+      routerChange
+    }
   }
 }
 </script>

@@ -16,22 +16,9 @@
 <script>
 import { RouterView } from 'vue-router'
 import SideWrap from '@/components/side-wrap/SideWrap.vue'
-import { mockLogin } from '@/service/chat.js'
-import { USER_SPECICAL_INFO } from '@/common/constants.js'
 
 export default {
-  components: { SideWrap },
-  mounted() {
-    mockLogin().then((res) => {
-      const { code, data } = res
-      if (code == 0) {
-        let obj = {}
-        obj.openid = data
-        //存储openid
-        localStorage.setItem(USER_SPECICAL_INFO, obj)
-      }
-    })
-  }
+  components: { SideWrap }
 }
 </script>
 
