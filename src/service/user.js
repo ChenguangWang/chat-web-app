@@ -23,3 +23,16 @@ export const getVerificationCode = () => {
     method: 'get'
   })
 }
+
+/**
+ * 注册/登录
+ * @param {*} data
+ * @returns
+ */
+export const registerAndLogin = (data) => {
+  return axios.request({
+    url: '/user/mobile/sign-in',
+    method: 'post',
+    data
+  })
+}

@@ -28,7 +28,8 @@
 
 <script>
 import { reactive, ref, watch } from 'vue'
-import { getVerificationCode } from '@/service/user.js'
+import { getVerificationCode, registerAndLogin } from '@/service/user.js'
+import { setToken } from '@/utils/auth'
 
 export default {
   name: 'LoginForm',
@@ -45,6 +46,16 @@ export default {
 
     const onFinish = (values) => {
       console.log('Success:', values)
+      const param = {
+        phoneNumber: values.username,
+        code: values.verificationCode
+      }
+      registerAndLogin(param).then((res) => {
+        if (res.code == 200) {
+          setToken(res.data.token)
+          router.push({ name: 'chat' })
+        }
+      })
     }
 
     const onFinishFailed = (errorInfo) => {
