@@ -15,7 +15,9 @@
     <a-form-item name="verificationCode" :rules="[{ required: true, message: '请输入验证码' }]">
       <div style="display: flex">
         <a-input v-model:value="formState.verificationCode" placeholder="输入验证码"></a-input>
-        <a-button type="text">获取验证码</a-button>
+        <a-button type="text" @click="fetchCode" :loading="codeBtnLoading">{{
+          codeBtnLoading ? `${times}秒后重试` : '获取验证码'
+        }}</a-button>
       </div>
     </a-form-item>
 
@@ -25,7 +27,8 @@
 </template>
 
 <script>
-import { reactive } from 'vue'
+import { reactive, ref, watch } from 'vue'
+import { getVerificationCode } from '@/service/user.js'
 
 export default {
   name: 'LoginForm',
@@ -36,6 +39,10 @@ export default {
       remember: true
     })
 
+    // 按钮loading
+    const codeBtnLoading = ref(false)
+    const times = ref(60)
+
     const onFinish = (values) => {
       console.log('Success:', values)
     }
@@ -43,8 +50,29 @@ export default {
     const onFinishFailed = (errorInfo) => {
       console.log('Failed:', errorInfo)
     }
+
+    let timer = null
+    const fetchCode = () => {
+      getVerificationCode().then((res) => {
+        codeBtnLoading.value = true
+        timer = setInterval(() => {
+          --times.value
+        }, 1000)
+      })
+    }
+
+    watch(times, (val) => {
+      if (val == 0) {
+        codeBtnLoading.value = false
+        times.value = 60
+        clearInterval(timer)
+      }
+    })
     return {
+      times,
+      codeBtnLoading,
       formState,
+      fetchCode,
       onFinish,
       onFinishFailed
     }

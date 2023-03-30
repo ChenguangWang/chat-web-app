@@ -12,3 +12,14 @@ export const login = (data) => {
     data
   })
 }
+
+/**
+ * 获取验证码
+ * @returns
+ */
+export const getVerificationCode = () => {
+  return axios.request({
+    url: '/security/verification-code',
+    method: 'get'
+  })
+}
