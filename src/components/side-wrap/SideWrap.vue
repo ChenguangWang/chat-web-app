@@ -19,16 +19,18 @@
       </div>
     </div>
     <div class="session-wrap">
-      <div class="session-wrap-title">当前会话</div>
-      <div class="add-btn"><plus-outlined style="margin-right: 8px" />新建会话</div>
+      <!-- <div class="session-wrap-title">当前会话</div>
+      <div class="add-btn"><plus-outlined style="margin-right: 8px" />新建会话</div> -->
       <div class="session-wrap-item"></div>
     </div>
     <div class="option-wrap">
-      <div class="option-wrap-item"><clear-outlined /><span class="btn-text">清除会话</span></div>
+      <!-- <div class="option-wrap-item"><clear-outlined /><span class="btn-text">清除会话</span></div>
       <div class="option-wrap-item" @click="routerChange('upgrade')">
         <account-book-outlined /><span class="btn-text">升级功能</span>
+      </div> -->
+      <div class="option-wrap-item" @click="logout">
+        <logout-outlined /><span class="btn-text">退出登录</span>
       </div>
-      <div class="option-wrap-item"><logout-outlined /><span class="btn-text">退出登录</span></div>
     </div>
   </div>
 </template>
@@ -36,7 +38,7 @@
 <script>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 import {
   UserOutlined,
   PlusOutlined,
@@ -66,9 +68,15 @@ export default {
     const hasToken = computed(() => {
       return getToken() ? true : false
     })
+
+    const logout = () => {
+      removeToken()
+      router.push({ name: 'login' })
+    }
     return {
       hasToken,
       defaultUserAvatar,
+      logout,
       routerChange
     }
   }
