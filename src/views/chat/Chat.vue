@@ -13,7 +13,8 @@
           </div>
           <div class="message-body">
             <!-- <div class="message-text">{{ message.text }}</div> -->
-            <MdEditor v-model="message.text" previewOnly />
+            <MdEditor v-if="!message.isLoading" v-model="message.text" previewOnly />
+            <img class="message-body-loading" v-else :src="loadingImg" />
           </div>
         </li>
         <li style="clear: both; margin: 0"></li>
@@ -21,7 +22,11 @@
     </section>
     <section class="send-wrap">
       <!-- @pressEnter 回车回调 -->
-      <a-textarea v-model:value="newMessage" />
+      <a-textarea
+        v-model:value="newMessage"
+        placeholder="输入消息，Ctrl + Enter 发送"
+        @keyup.ctrl.enter="sendMessage"
+      />
       <a-button class="send-btn" type="primary" shape="round" @click="sendMessage">
         <template #icon>
           <send-outlined />
@@ -39,8 +44,10 @@ import { SendOutlined } from '@ant-design/icons-vue'
 import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
 import { chat, streamChat } from '@/service/chat'
 
+// 静态图片引入
 import defaultUserAvatar from '@/assets/default_user.jpg'
 import systemAvatar from '@/assets/logo.jpg'
+import loadingGIF from '@/assets/loading.gif'
 
 export default {
   components: {
@@ -50,6 +57,7 @@ export default {
   setup() {
     const newMessage = ref('')
     const chatWrapDom = ref()
+    const loadingImg = loadingGIF
     const messages = reactive([
       {
         id: Date.now(),
@@ -98,6 +106,7 @@ export default {
         avatar: systemAvatar
       }
 
+      const newLength = messages.push(responseMsg)
       scrollBottom()
 
       const chatParam = {
@@ -110,8 +119,8 @@ export default {
         console.log('chat=====>>>', res)
         const { code, data } = res
         if (code == 200) {
-          responseMsg.text = data.context
-          messages.push(responseMsg)
+          messages[newLength - 1]['text'] = data.context
+          messages[newLength - 1]['isLoading'] = false
           scrollBottom()
         }
       })
@@ -128,6 +137,7 @@ export default {
     })
 
     return {
+      loadingImg,
       messages,
       newMessage,
       chatWrapDom,
@@ -178,6 +188,9 @@ header {
         padding: 10px;
         border-radius: 8px;
         background-color: #f2f2f2;
+        &-loading {
+          height: 25px;
+        }
       }
       .message-avatar {
         overflow: hidden;
