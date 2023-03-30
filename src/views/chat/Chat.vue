@@ -37,6 +37,8 @@ import MdEditor from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { SendOutlined } from '@ant-design/icons-vue'
 import { reactive, onMounted, onBeforeUnmount, ref } from 'vue'
+import { chat, streamChat } from '@/service/chat'
+import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill'
 
 export default {
   components: {
@@ -59,16 +61,36 @@ export default {
     ])
 
     const sendMessage = () => {
-      if (newMessage.value.trim()) {
-        messages.push({
-          id: Date.now(),
-          author: 'User',
-          text: newMessage.value.trim(),
-          isSent: true, // 标记消息是否由当前用户发送
-          avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
-        })
-        newMessage.value = ''
+      if (!newMessage.value.trim()) {
+        return
       }
+      const sendMsg = newMessage.value.trim()
+      messages.push({
+        id: Date.now(),
+        author: 'User',
+        text: sendMsg,
+        isSent: true, // 标记消息是否由当前用户发送
+        avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
+      })
+      newMessage.value = ''
+
+      const EventSource = NativeEventSource || EventSourcePolyfill
+      const source = new EventSource('/api/stream/chat', { method: 'POST' })
+      source.onmessage = (event) => {
+        console.log('Received message:', event.data)
+      }
+      source.onerror = (error) => {
+        console.error('EventSource error:', error)
+        source.close()
+      }
+
+      streamChat({ messages: sendMsg }).then((res) => {
+        source.sendEvent({
+          data: res.responseText,
+          type: 'postResponse',
+          id: '12345'
+        })
+      })
     }
 
     onMounted(() => {

@@ -5,14 +5,18 @@
         <img src="@/assets/logo-regist.png" />
       </p>
 
-      <a-tabs v-model:activeKey="activeKey">
+      <a-tabs v-model:activeKey="activeKey" @change="changeTab">
         <a-tab-pane key="1" tab="验证码登录"></a-tab-pane>
+        <a-tab-pane key="2" tab="密码登录"></a-tab-pane>
       </a-tabs>
 
-      <div class="container-login" v-if="formType == 'login'">
+      <div class="container-login" v-if="activeKey == '1'">
         <LoginForm></LoginForm>
       </div>
-      <div class="container-login" v-if="formType == 'findPassword'">
+      <div class="container-login" v-if="activeKey == '2'">
+        <PasswordForm></PasswordForm>
+      </div>
+      <div class="container-login" v-if="activeKey == '3'">
         <FindPassword></FindPassword>
       </div>
     </div>
@@ -21,21 +25,18 @@
 
 <script>
 import LoginForm from './components/LoginForm.vue'
+import PasswordForm from './components/PasswordForm.vue'
 import FindPassword from './components/FindPassword.vue'
 
 export default {
   name: 'Login',
-  components: { LoginForm, FindPassword },
+  components: { LoginForm, FindPassword, PasswordForm },
   data() {
     return {
       activeKey: '1'
     }
   },
-  computed: {
-    formType() {
-      return this.$route.query.type || 'login'
-    }
-  },
+  computed: {},
   methods: {},
   mounted() {
     document.title = '登陆'

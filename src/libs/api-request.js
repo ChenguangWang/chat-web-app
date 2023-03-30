@@ -31,7 +31,7 @@ class HttpRequest {
         const { result, code, msg } = res.data
         //请求头content-type为application/octet-stream下载流形式
         if (
-          res.headers['content-type'] == 'application/octet-stream;charset=UTF-8' ||
+          res.headers['content-type'] == 'text/event-stream' ||
           res.headers['content-type'] == 'application/zip;charset=UTF-8'
         ) {
           return res
