@@ -15,9 +15,13 @@
     <a-form-item name="verificationCode" :rules="[{ required: true, message: '请输入验证码' }]">
       <div style="display: flex">
         <a-input v-model:value="formState.verificationCode" placeholder="输入验证码"></a-input>
-        <a-button type="text" @click="fetchCode" :loading="codeBtnLoading">{{
-          codeBtnLoading ? `${times}秒后重试` : '获取验证码'
-        }}</a-button>
+        <a-button
+          type="text"
+          @click="fetchCode"
+          :loading="codeBtnLoading"
+          :disabled="!formState.username"
+          >{{ codeBtnLoading ? `${times}秒后重试` : '获取验证码' }}</a-button
+        >
       </div>
     </a-form-item>
 
@@ -30,6 +34,7 @@
 import { reactive, ref, watch } from 'vue'
 import { getVerificationCode, registerAndLogin } from '@/service/user.js'
 import { setToken } from '@/utils/auth'
+import { message as antMessage } from 'ant-design-vue'
 
 export default {
   name: 'LoginForm',
@@ -64,7 +69,15 @@ export default {
 
     let timer = null
     const fetchCode = () => {
-      getVerificationCode().then((res) => {
+      if (!/^1\d{10}$/.test(formState.username)) {
+        antMessage.warning('请输入正确手机号')
+        return
+      }
+      const param = {
+        phoneNumber: formState.username,
+        codeType: 1
+      }
+      getVerificationCode(param).then((res) => {
         codeBtnLoading.value = true
         timer = setInterval(() => {
           --times.value

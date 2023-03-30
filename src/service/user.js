@@ -17,10 +17,11 @@ export const login = (data) => {
  * 获取验证码
  * @returns
  */
-export const getVerificationCode = () => {
+export const getVerificationCode = (params) => {
   return axios.request({
     url: '/security/verification-code',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 
