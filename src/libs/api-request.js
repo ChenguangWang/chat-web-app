@@ -1,10 +1,10 @@
 import axios from 'axios'
+import { getToken } from '@/utils/auth'
 import { message as antMessage } from 'ant-design-vue'
 
 class HttpRequest {
   constructor(baseUrl = baseURL) {
     this.baseUrl = baseUrl
-    this.queue = {}
   }
   getInsideConfig() {
     const config = {
@@ -17,8 +17,7 @@ class HttpRequest {
     // 请求拦截
     instance.interceptors.request.use(
       (config) => {
-        this.queue[url] = true
-
+        config.headers['HI_SMART_TOKEN_KEY'] = getToken()
         return config
       },
       (error) => {
@@ -28,7 +27,7 @@ class HttpRequest {
     // 响应拦截
     instance.interceptors.response.use(
       (res) => {
-        const { result, code, msg } = res.data
+        const { data, code, msg } = res.data
         //请求头content-type为application/octet-stream下载流形式
         if (
           res.headers['content-type'] == 'text/event-stream' ||
@@ -37,12 +36,12 @@ class HttpRequest {
           return res
         }
         switch (code) {
-          case 0:
-            return { result, code }
+          case 200:
+            return { data, code }
           default:
             antMessage.destroy()
             antMessage.warning(msg)
-            return { result, code }
+            return { data, code }
         }
       },
       (error) => {

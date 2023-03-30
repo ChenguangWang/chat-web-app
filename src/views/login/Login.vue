@@ -1,13 +1,17 @@
 <template>
   <div class="regist">
     <div class="regist-container">
-      <p class="container-logo">
-        <img src="@/assets/logo-regist.png" />
-      </p>
+      <div class="container-logo">
+        <img src="@/assets/logo.jpg" />
+        <div class="logo-wrap-desc">
+          <h4>爱能智慧助手</h4>
+          <span>AITalkAssistant</span>
+        </div>
+      </div>
 
-      <a-tabs v-model:activeKey="activeKey" @change="changeTab">
-        <a-tab-pane key="1" tab="验证码登录"></a-tab-pane>
+      <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="2" tab="密码登录"></a-tab-pane>
+        <a-tab-pane key="1" tab="验证码登录"></a-tab-pane>
       </a-tabs>
 
       <div class="container-login" v-if="activeKey == '1'">
@@ -27,13 +31,15 @@
 import LoginForm from './components/LoginForm.vue'
 import PasswordForm from './components/PasswordForm.vue'
 import FindPassword from './components/FindPassword.vue'
+import { ref } from 'vue'
 
 export default {
   name: 'Login',
   components: { LoginForm, FindPassword, PasswordForm },
-  data() {
+  setup() {
+    const activeKey = ref('2')
     return {
-      activeKey: '1'
+      activeKey
     }
   },
   computed: {},
@@ -67,9 +73,21 @@ export default {
   }
 }
 .container-logo {
+  display: flex;
+  line-height: normal;
   img {
-    width: 130px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
+    border-radius: 4px;
+    box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
+  }
+  .logo-wrap-desc {
+    margin-left: 8px;
+    span {
+      font-size: 12px;
+      color: #17233d;
+      opacity: 0.8;
+    }
   }
 }
 

@@ -2,18 +2,20 @@
   <div class="side-wrap">
     <div>
       <div class="logo-wrap">
-        <img src="/src/assets/logo.jpg1" class="logo-wrap-img" alt="" />
+        <img src="/src/assets/logo.jpg" class="logo-wrap-img" alt="" />
         <div class="logo-wrap-desc">
           <h4>爱能智慧助手</h4>
           <span>AITalkAssistant</span>
         </div>
       </div>
       <div class="user-wrap">
-        <a-avatar :size="48">
+        <a-avatar :size="48" :src="defaultUserAvatar">
           <template #icon><UserOutlined /></template>
         </a-avatar>
         <br />
-        <a-button class="login-btn" type="text" @click="routerChange('login')">点击登录</a-button>
+        <a-button class="login-btn" v-show="!hasToken" type="text" @click="routerChange('login')"
+          >点击登录</a-button
+        >
       </div>
     </div>
     <div class="session-wrap">
@@ -32,7 +34,9 @@
 </template>
 
 <script>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { getToken } from '@/utils/auth'
 import {
   UserOutlined,
   PlusOutlined,
@@ -40,6 +44,8 @@ import {
   AccountBookOutlined,
   LogoutOutlined
 } from '@ant-design/icons-vue'
+import defaultUser from '@/assets/default_user.jpg'
+
 export default {
   components: {
     UserOutlined,
@@ -53,7 +59,16 @@ export default {
     const routerChange = (name) => {
       router.push(name)
     }
+    // 默认头像
+    const defaultUserAvatar = defaultUser
+
+    // 计算属性 是否存在token
+    const hasToken = computed(() => {
+      return getToken() ? true : false
+    })
     return {
+      hasToken,
+      defaultUserAvatar,
       routerChange
     }
   }

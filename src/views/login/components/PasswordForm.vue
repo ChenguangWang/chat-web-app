@@ -11,7 +11,11 @@
     </a-form-item>
 
     <a-form-item name="password" :rules="[{ required: true, message: '请输入密码' }]">
-      <a-input-password v-model:value="formState.password" placeholder="输入密码" />
+      <a-input-password
+        v-model:value="formState.password"
+        placeholder="输入密码"
+        autocomplete="off"
+      />
     </a-form-item>
 
     <a-button type="primary" block html-type="submit">登录</a-button>
@@ -21,6 +25,7 @@
 <script>
 import { reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { setToken } from '@/utils/auth'
 
 import { login } from '@/service/user.js'
 
@@ -35,9 +40,8 @@ export default {
 
     const onFinish = async (values) => {
       const loginRes = await login(values)
-      console.log('loginRes====>>>', loginRes)
-      // if (loginRes.code == 0) {
-      if (loginRes.code) {
+      if (loginRes.code == 200) {
+        setToken(loginRes.data.token)
         router.push({ name: 'chat' })
       }
     }
