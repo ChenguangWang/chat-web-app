@@ -1,7 +1,7 @@
 <template>
   <div class="chat-room">
     <header>聊天标题</header>
-    <section class="chat-wrap">
+    <section class="chat-wrap" ref="chatWrapDom">
       <ul class="chat-messages">
         <li
           v-for="message in messages"
@@ -36,9 +36,11 @@
 import MdEditor from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { SendOutlined } from '@ant-design/icons-vue'
-import { reactive, onMounted, onBeforeUnmount, ref } from 'vue'
+import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
 import { chat, streamChat } from '@/service/chat'
-import { NativeEventSource, EventSourcePolyfill } from 'event-source-polyfill'
+
+import defaultUserAvatar from '@/assets/default_user.jpg'
+import systemAvatar from '@/assets/logo.jpg'
 
 export default {
   components: {
@@ -46,8 +48,8 @@ export default {
     MdEditor
   },
   setup() {
-    const systemAvatar = '/src/assets/logo.jpg'
     const newMessage = ref('')
+    const chatWrapDom = ref()
     const messages = reactive([
       {
         id: Date.now(),
@@ -60,6 +62,20 @@ export default {
       }
     ])
 
+    /**
+     * 滚动到底部
+     */
+    const scrollBottom = () => {
+      nextTick(() => {
+        const domheight = chatWrapDom.value.scrollHeight
+        chatWrapDom.value &&
+          chatWrapDom.value.scrollTo({
+            top: domheight,
+            behavior: 'smooth'
+          })
+      })
+    }
+
     const sendMessage = () => {
       if (!newMessage.value.trim()) {
         return
@@ -70,26 +86,34 @@ export default {
         author: 'User',
         text: sendMsg,
         isSent: true, // 标记消息是否由当前用户发送
-        avatar: 'https://randomuser.me/api/portraits/women/2.jpg'
+        avatar: defaultUserAvatar
       })
       newMessage.value = ''
 
-      const EventSource = NativeEventSource || EventSourcePolyfill
-      const source = new EventSource('/api/stream/chat', { method: 'POST' })
-      source.onmessage = (event) => {
-        console.log('Received message:', event.data)
-      }
-      source.onerror = (error) => {
-        console.error('EventSource error:', error)
-        source.close()
+      let responseMsg = {
+        id: Date.now(),
+        author: 'gpt',
+        isSent: false,
+        isLoading: true, // 加载中 TODO: 预留的加载口子
+        avatar: systemAvatar
       }
 
-      streamChat({ messages: sendMsg }).then((res) => {
-        source.sendEvent({
-          data: res.responseText,
-          type: 'postResponse',
-          id: '12345'
-        })
+      scrollBottom()
+
+      const chatParam = {
+        context: false, // 上下文
+        message: sendMsg, // 信息
+        sessionId: 'test', // 会话id
+        userId: '101' // 用户id
+      }
+      chat(chatParam).then((res) => {
+        console.log('chat=====>>>', res)
+        const { code, data } = res
+        if (code == 200) {
+          responseMsg.text = data.context
+          messages.push(responseMsg)
+          scrollBottom()
+        }
       })
     }
 
@@ -106,6 +130,7 @@ export default {
     return {
       messages,
       newMessage,
+      chatWrapDom,
       sendMessage
     }
   }
