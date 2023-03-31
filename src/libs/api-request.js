@@ -61,7 +61,7 @@ let baseURLMap = {
   // 开发
   development: '/api',
   // 正式版
-  production: '/api'
+  production: 'https://api.hi-chat.com.cn/api'
 }
 
 let baseURL = baseURLMap[process.env.NODE_ENV]
