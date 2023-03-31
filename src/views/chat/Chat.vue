@@ -38,10 +38,11 @@
 </template>
 
 <script>
+import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
 import MdEditor from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
 import { SendOutlined } from '@ant-design/icons-vue'
-import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
 import { chat, streamChat } from '@/service/chat'
 
 // 静态图片引入
@@ -55,20 +56,11 @@ export default {
     MdEditor
   },
   setup() {
+    const route = useRoute()
     const newMessage = ref('')
     const chatWrapDom = ref()
     const loadingImg = loadingGIF
-    const messages = reactive([
-      {
-        id: Date.now(),
-        author: 'AI',
-        text: `你好！我是基于人工智能诞生的AI对话助手。\n
-我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
-        // 以下是一些经典案例：\n`,
-        isSent: false,
-        avatar: systemAvatar
-      }
-    ])
+    let messages = reactive([])
 
     /**
      * 滚动到底部
@@ -135,6 +127,23 @@ export default {
       // disconnect from chat server
       console.log('Unmounted')
     })
+
+    if (!route.query.msg) {
+      messages = reactive([
+        {
+          id: Date.now(),
+          author: 'AI',
+          text: `你好！我是基于人工智能诞生的AI对话助手。\n
+我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
+          // 以下是一些经典案例：\n`,
+          isSent: false,
+          avatar: systemAvatar
+        }
+      ])
+    } else {
+      newMessage.value = route.query.msg
+      sendMessage()
+    }
 
     return {
       loadingImg,

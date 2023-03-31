@@ -19,7 +19,7 @@
     <div class="input-wrap">
       <a-input
         v-model:value="inputValue"
-        placeholder="按下回车创建对话"
+        placeholder="按下回车键创建对话"
         size="large"
         @pressEnter="createSession()"
       >
@@ -49,8 +49,8 @@ export default {
       const startMsg = data || inputValue.value
       router.push({
         name: 'chat',
-        params: {
-          startMsg
+        query: {
+          msg: startMsg
         }
       })
     }
