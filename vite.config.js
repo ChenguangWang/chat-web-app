@@ -6,6 +6,7 @@ import vue from '@vitejs/plugin-vue'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: 'page',
   plugins: [vue()],
   resolve: {
     alias: {
@@ -26,7 +27,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://47.88.11.59:8081', // 代理的目标地址
+        target: 'https://hi-chat.com.cn', // 代理的目标地址
         ws: false,
         changeOrigin: true
       }
