@@ -17,7 +17,7 @@ class HttpRequest {
     // 请求拦截
     instance.interceptors.request.use(
       (config) => {
-        config.headers['HI_SMART_TOKEN_KEY'] = getToken()
+        config.headers['HI-SMART-TOKEN-KEY'] = getToken()
         return config
       },
       (error) => {
