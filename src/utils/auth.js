@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie'
 
-const TokenKey = 'HI-SMART-TOKEN-KEY'
+const TokenKey = 'HI_SMART_TOKEN_KEY'
 
 export function getToken() {
   return Cookies.get(TokenKey)
