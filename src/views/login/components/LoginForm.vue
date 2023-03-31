@@ -32,6 +32,7 @@
 
 <script>
 import { reactive, ref, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import { getVerificationCode, registerAndLogin } from '@/service/user.js'
 import { setToken } from '@/utils/auth'
 import { message as antMessage } from 'ant-design-vue'
@@ -39,6 +40,7 @@ import { message as antMessage } from 'ant-design-vue'
 export default {
   name: 'LoginForm',
   setup() {
+    const router = useRouter()
     const formState = reactive({
       username: '',
       verificationCode: '',
@@ -78,6 +80,9 @@ export default {
         codeType: 1
       }
       getVerificationCode(param).then((res) => {
+        if (res.code == 200) {
+          antMessage.success(res.data)
+        }
         codeBtnLoading.value = true
         timer = setInterval(() => {
           --times.value
