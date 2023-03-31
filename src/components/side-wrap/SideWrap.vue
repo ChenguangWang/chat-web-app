@@ -59,15 +59,16 @@ export default {
   setup() {
     const router = useRouter()
     const routerChange = (name) => {
-      router.push(name)
+      router.push({ name })
     }
-    // 默认头像
-    const defaultUserAvatar = defaultUser
 
     // 计算属性 是否存在token
     const hasToken = computed(() => {
       return getToken() ? true : false
     })
+
+    // 默认头像
+    const defaultUserAvatar = hasToken.value ? defaultUser : ''
 
     const logout = () => {
       removeToken()
