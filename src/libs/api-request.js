@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { getToken } from '@/utils/auth'
 import { message as antMessage } from 'ant-design-vue'
+import router from '@/router'
 
 class HttpRequest {
   constructor(baseUrl = baseURL) {
@@ -38,6 +39,9 @@ class HttpRequest {
         switch (code) {
           case 200:
             return { data, code }
+          case 40000:
+            antMessage.warning('登录超时')
+            router.push({ name: 'login' })
           default:
             antMessage.destroy()
             antMessage.warning(msg)
