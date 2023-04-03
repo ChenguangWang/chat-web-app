@@ -19,7 +19,7 @@
     <div class="input-wrap">
       <a-input
         v-model:value="inputValue"
-        placeholder="按下回车键创建对话"
+        placeholder="和AI聊点什么"
         size="large"
         @pressEnter="createSession()"
       >
