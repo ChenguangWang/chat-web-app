@@ -11,10 +11,17 @@
           <div class="message-avatar">
             <img :src="message.avatar" alt="avatar" />
           </div>
-          <div class="message-body">
-            <!-- <div class="message-text">{{ message.text }}</div> -->
-            <MdEditor v-if="!message.isLoading" v-model="message.text" previewOnly />
-            <img class="message-body-loading" v-else :src="loadingImg" />
+          <div class="message-wrap">
+            <div class="message-body">
+              <!-- <div class="message-text">{{ message.text }}</div> -->
+              <MdEditor v-if="!message.isLoading" v-model="message.text" previewOnly />
+              <img class="message-body-loading" v-else :src="loadingImg" />
+            </div>
+            <div class="message-wrap-operation" v-if="!message.isSent && !message.isLoading">
+              <div class="message-wrap-operation-btn" @click="copyMessage(message.text)">
+                <i class="iconfont icon-fuzhi"></i> 复制
+              </div>
+            </div>
           </div>
         </li>
         <li style="clear: both; margin: 0"></li>
@@ -42,8 +49,10 @@ import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 import MdEditor from 'md-editor-v3'
 import 'md-editor-v3/lib/style.css'
+import { message as antMessage } from 'ant-design-vue'
 import { SendOutlined } from '@ant-design/icons-vue'
 import { chat, streamChat } from '@/service/chat'
+import { copyText } from '@/utils/tools.js'
 
 // 静态图片引入
 import defaultUserAvatar from '@/assets/default_user.jpg'
@@ -76,6 +85,18 @@ export default {
       })
     }
 
+    /**
+     * 复制信息
+     */
+    const copyMessage = (content) => {
+      copyText(content, () => {
+        antMessage.success('复制成功')
+      })
+    }
+
+    /**
+     * 发送信息
+     */
     const sendMessage = () => {
       if (!newMessage.value.trim()) {
         return
@@ -150,6 +171,7 @@ export default {
       messages,
       newMessage,
       chatWrapDom,
+      copyMessage,
       sendMessage
     }
   }
@@ -191,6 +213,18 @@ header {
         float: left;
         .message-body {
           background-color: #eaeaea;
+        }
+      }
+      .message-wrap {
+        &-operation {
+          &-btn {
+            font-size: 12px;
+            color: #808695;
+            cursor: pointer;
+            &:hover {
+              color: #2285f0;
+            }
+          }
         }
       }
       .message-body {
