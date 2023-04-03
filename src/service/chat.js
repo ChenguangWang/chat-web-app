@@ -7,7 +7,7 @@ import axios from '@/libs/api-request.js'
  */
 export const chat = (data) => {
   return axios.request({
-    baseURL: 'https://hi-chat.com.cn/api',
+    baseURL: 'https://api.chat-info.com.cn/api',
     url: '/chat',
     method: 'post',
     data
@@ -20,7 +20,7 @@ export const chat = (data) => {
  */
 export const streamChat = (data) => {
   return axios.request({
-    baseURL: 'https://hi-chat.com.cn/api',
+    baseURL: 'https://api.chat-info.com.cn/api',
     url: '/stream/chat',
     method: 'post',
     data,
