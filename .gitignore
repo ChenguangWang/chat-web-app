@@ -14,6 +14,7 @@ dist-ssr
 coverage
 *.local
 package-lock.json
+*.tar.gz
 
 /cypress/videos/
 /cypress/screenshots/
