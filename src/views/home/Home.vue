@@ -65,17 +65,19 @@ export default {
 
 <style lang="less" scoped>
 .home-wrap {
+  position: relative;
   text-align: center;
   height: 100%;
   overflow: scroll;
   padding-bottom: 24px;
   .title {
-    padding-top: 20vh;
+    padding-top: 10vh;
     font-weight: 600;
     margin-bottom: 60px;
     font-size: 40px;
   }
   &-guide {
+    margin: 0 24px;
     display: flex;
     justify-content: center;
     .guide-item-wrap {
@@ -108,6 +110,10 @@ export default {
     }
   }
   .input-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%);
     width: 65%;
     margin: 34px auto;
     .ant-input-affix-wrapper {

@@ -275,4 +275,11 @@ header {
   margin: 0;
   padding: 0;
 }
+
+// 小屏兼容
+@media only screen and (max-width: 768px) {
+  header {
+    display: none;
+  }
+}
 </style>
