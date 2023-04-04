@@ -24,10 +24,11 @@ export default defineConfig({
     }
   },
   server: {
+    // host: '172.48.106.63',
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://47.88.11.59:8081', // 代理的目标地址
+        target: 'http://47.93.50.221:8080', // 代理的目标地址
         ws: false,
         changeOrigin: true
       }

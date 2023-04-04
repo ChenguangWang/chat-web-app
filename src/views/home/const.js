@@ -16,6 +16,6 @@ export default {
         iconClass: 'icon-xiaozhushouhdpi',
         list: ['安排去北京的旅游计划', '羊了个羊通关诀窍', '用JAVA完成一个冒泡排序']
       }
-    ]
+    ];
   }
-}
+};

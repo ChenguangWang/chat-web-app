@@ -32,35 +32,35 @@
 </template>
 
 <script>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { SendOutlined } from '@ant-design/icons-vue'
-import Const from './const'
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { SendOutlined } from '@ant-design/icons-vue';
+import Const from './const';
 export default {
   components: {
     SendOutlined
   },
   setup() {
-    const exampleData = Const.exampleData()
-    const inputValue = ref()
-    const router = useRouter()
+    const exampleData = Const.exampleData();
+    const inputValue = ref();
+    const router = useRouter();
 
     const createSession = (data) => {
-      const startMsg = data || inputValue.value
+      const startMsg = data || inputValue.value;
       router.push({
         name: 'chat',
         query: {
           msg: startMsg
         }
-      })
-    }
+      });
+    };
     return {
       inputValue,
       exampleData,
       createSession
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

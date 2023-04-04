@@ -17,40 +17,40 @@
 </template>
 
 <script>
-import { MenuOutlined, PlusOutlined } from '@ant-design/icons-vue'
-import { useRouter } from 'vue-router'
-import { ref } from 'vue'
-import SideWrap from '@/components/side-wrap/SideWrap.vue'
+import { MenuOutlined, PlusOutlined } from '@ant-design/icons-vue';
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import SideWrap from '@/components/side-wrap/SideWrap.vue';
 
 export default {
   components: { MenuOutlined, PlusOutlined, SideWrap },
   setup() {
-    const router = useRouter()
-    const drawerVisible = ref(false)
-    const title = ref('爱能智慧助手')
+    const router = useRouter();
+    const drawerVisible = ref(false);
+    const title = ref('爱能智慧助手');
     const toHome = () => {
-      router.push({ name: 'home' })
-    }
+      router.push({ name: 'home' });
+    };
 
     const openMmenu = () => {
-      drawerVisible.value = true
-    }
+      drawerVisible.value = true;
+    };
 
     /**
      * 关闭抽屉
      */
     const onDrawerVisibleClose = () => {
-      drawerVisible.value = false
-    }
+      drawerVisible.value = false;
+    };
     return {
       title,
       drawerVisible,
       toHome,
       openMmenu,
       onDrawerVisibleClose
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

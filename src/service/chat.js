@@ -1,4 +1,4 @@
-import axios from '@/libs/api-request.js'
+import axios from '@/libs/api-request.js';
 
 /**
  * 聊天
@@ -11,8 +11,8 @@ export const chat = (data) => {
     url: '/chat',
     method: 'post',
     data
-  })
-}
+  });
+};
 /**
  * 流聊天
  * @param {*} data
@@ -26,5 +26,5 @@ export const streamChat = (data) => {
     data,
     responseType: 'stream'
     // responseType: 'text/event-stream'
-  })
-}
+  });
+};

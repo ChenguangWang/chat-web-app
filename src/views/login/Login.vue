@@ -28,26 +28,26 @@
 </template>
 
 <script>
-import LoginForm from './components/LoginForm.vue'
-import PasswordForm from './components/PasswordForm.vue'
-import FindPassword from './components/FindPassword.vue'
-import { ref } from 'vue'
+import LoginForm from './components/LoginForm.vue';
+import PasswordForm from './components/PasswordForm.vue';
+import FindPassword from './components/FindPassword.vue';
+import { ref } from 'vue';
 
 export default {
   name: 'Login',
   components: { LoginForm, FindPassword, PasswordForm },
   setup() {
-    const activeKey = ref('2')
+    const activeKey = ref('2');
     return {
       activeKey
-    }
+    };
   },
   computed: {},
   methods: {},
   mounted() {
-    document.title = '登陆'
+    document.title = '登陆';
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

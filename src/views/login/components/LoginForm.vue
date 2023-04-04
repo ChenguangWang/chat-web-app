@@ -31,72 +31,72 @@
 </template>
 
 <script>
-import { reactive, ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
-import { getVerificationCode, registerAndLogin } from '@/service/user.js'
-import { setToken } from '@/utils/auth'
-import { message as antMessage } from 'ant-design-vue'
+import { reactive, ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { getVerificationCode, registerAndLogin } from '@/service/user.js';
+import { setToken } from '@/utils/auth';
+import { message as antMessage } from 'ant-design-vue';
 
 export default {
   name: 'LoginForm',
   setup() {
-    const router = useRouter()
+    const router = useRouter();
     const formState = reactive({
       username: '',
       verificationCode: '',
       remember: true
-    })
+    });
 
     // 按钮loading
-    const codeBtnLoading = ref(false)
-    const times = ref(60)
+    const codeBtnLoading = ref(false);
+    const times = ref(60);
 
     const onFinish = (values) => {
-      console.log('Success:', values)
+      console.log('Success:', values);
       const param = {
         phoneNumber: values.username,
         code: values.verificationCode
-      }
+      };
       registerAndLogin(param).then((res) => {
         if (res.code == 200) {
-          setToken(res.data.token)
-          router.push({ name: 'chat' })
+          setToken(res.data.token);
+          router.push({ name: 'chat' });
         }
-      })
-    }
+      });
+    };
 
     const onFinishFailed = (errorInfo) => {
-      console.log('Failed:', errorInfo)
-    }
+      console.log('Failed:', errorInfo);
+    };
 
-    let timer = null
+    let timer = null;
     const fetchCode = () => {
       if (!/^1\d{10}$/.test(formState.username)) {
-        antMessage.warning('请输入正确手机号')
-        return
+        antMessage.warning('请输入正确手机号');
+        return;
       }
       const param = {
         phoneNumber: formState.username,
         codeType: 1
-      }
+      };
       getVerificationCode(param).then((res) => {
         if (res.code == 200) {
-          antMessage.success(res.data)
+          antMessage.success(res.data);
         }
-        codeBtnLoading.value = true
+        codeBtnLoading.value = true;
         timer = setInterval(() => {
-          --times.value
-        }, 1000)
-      })
-    }
+          --times.value;
+        }, 1000);
+      });
+    };
 
     watch(times, (val) => {
       if (val == 0) {
-        codeBtnLoading.value = false
-        times.value = 60
-        clearInterval(timer)
+        codeBtnLoading.value = false;
+        times.value = 60;
+        clearInterval(timer);
       }
-    })
+    });
     return {
       times,
       codeBtnLoading,
@@ -104,9 +104,9 @@ export default {
       fetchCode,
       onFinish,
       onFinishFailed
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

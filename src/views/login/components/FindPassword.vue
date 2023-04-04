@@ -82,44 +82,44 @@ export default {
       second: 60, // 验证码保护时间
       disabledVcode: false, // 禁用发送验证码
       sendSuccess: false // 验证码是否发送成功
-    }
+    };
   },
   methods: {
     /**
      * 获取验证码
      */
     getVcode() {
-      this.disabledVcode = true
+      this.disabledVcode = true;
       let timer = setInterval(() => {
-        this.second--
-      }, 1000)
+        this.second--;
+      }, 1000);
       setTimeout(() => {
-        this.disabledVcode = false
-        this.second = 60
-        clearInterval(timer)
-      }, 60000)
+        this.disabledVcode = false;
+        this.second = 60;
+        clearInterval(timer);
+      }, 60000);
     },
     /**
      * 提交下一步
      */
     handleSubmit() {
-      const formRef = this.formType
+      const formRef = this.formType;
       this.$refs[formRef].validate((valid) => {
         if (valid) {
           if (formRef == 'sendForm') {
             // TODO:发送验证码请求
-            this.formType = 'findPasswordForm'
-            this.findPasswordForm.email = this.sendForm.email
-            this.getVcode()
+            this.formType = 'findPasswordForm';
+            this.findPasswordForm.email = this.sendForm.email;
+            this.getVcode();
           } else if (formRef == 'findPasswordForm') {
             // TODO: 确认提交后下一步
-            this.$router.push('/login')
+            this.$router.push('/login');
           }
         }
-      })
+      });
     }
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

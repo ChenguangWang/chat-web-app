@@ -45,19 +45,19 @@
 </template>
 
 <script>
-import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue'
-import { useRoute } from 'vue-router'
-import MdEditor from 'md-editor-v3'
-import 'md-editor-v3/lib/style.css'
-import { message as antMessage } from 'ant-design-vue'
-import { SendOutlined } from '@ant-design/icons-vue'
-import { chat, streamChat } from '@/service/chat'
-import { copyText } from '@/utils/tools.js'
+import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue';
+import { useRoute } from 'vue-router';
+import MdEditor from 'md-editor-v3';
+import 'md-editor-v3/lib/style.css';
+import { message as antMessage } from 'ant-design-vue';
+import { SendOutlined } from '@ant-design/icons-vue';
+import { chat, streamChat } from '@/service/chat';
+import { copyText } from '@/utils/tools.js';
 
 // 静态图片引入
-import defaultUserAvatar from '@/assets/default_user.jpg'
-import systemAvatar from '@/assets/logo.jpg'
-import loadingGIF from '@/assets/loading.gif'
+import defaultUserAvatar from '@/assets/default_user.jpg';
+import systemAvatar from '@/assets/logo.jpg';
+import loadingGIF from '@/assets/loading.gif';
 
 export default {
   components: {
@@ -65,51 +65,51 @@ export default {
     MdEditor
   },
   setup() {
-    const route = useRoute()
-    const newMessage = ref('')
-    const chatWrapDom = ref()
-    const loadingImg = loadingGIF
-    let messages = reactive([])
+    const route = useRoute();
+    const newMessage = ref('');
+    const chatWrapDom = ref();
+    const loadingImg = loadingGIF;
+    let messages = reactive([]);
 
     /**
      * 滚动到底部
      */
     const scrollBottom = () => {
       nextTick(() => {
-        const domheight = chatWrapDom.value.scrollHeight
+        const domheight = chatWrapDom.value.scrollHeight;
         chatWrapDom.value &&
           chatWrapDom.value.scrollTo({
             top: domheight,
             behavior: 'smooth'
-          })
-      })
-    }
+          });
+      });
+    };
 
     /**
      * 复制信息
      */
     const copyMessage = (content) => {
       copyText(content, () => {
-        antMessage.success('复制成功')
-      })
-    }
+        antMessage.success('复制成功');
+      });
+    };
 
     /**
      * 发送信息
      */
     const sendMessage = () => {
       if (!newMessage.value.trim()) {
-        return
+        return;
       }
-      const sendMsg = newMessage.value.trim()
+      const sendMsg = newMessage.value.trim();
       messages.push({
         id: Date.now(),
         author: 'User',
         text: sendMsg,
         isSent: true, // 标记消息是否由当前用户发送
         avatar: defaultUserAvatar
-      })
-      newMessage.value = ''
+      });
+      newMessage.value = '';
 
       let responseMsg = {
         id: Date.now(),
@@ -117,37 +117,37 @@ export default {
         isSent: false,
         isLoading: true, // 加载中 TODO: 预留的加载口子
         avatar: systemAvatar
-      }
+      };
 
-      const newLength = messages.push(responseMsg)
-      scrollBottom()
+      const newLength = messages.push(responseMsg);
+      scrollBottom();
 
       const chatParam = {
         context: false, // 上下文
         message: sendMsg, // 信息
         sessionId: 'test', // 会话id
         userId: '101' // 用户id
-      }
+      };
       chat(chatParam).then((res) => {
-        console.log('chat=====>>>', res)
-        const { code, data } = res
+        console.log('chat=====>>>', res);
+        const { code, data } = res;
         if (code == 200) {
-          messages[newLength - 1]['text'] = data.context
-          messages[newLength - 1]['isLoading'] = false
-          scrollBottom()
+          messages[newLength - 1]['text'] = data.context;
+          messages[newLength - 1]['isLoading'] = false;
+          scrollBottom();
         }
-      })
-    }
+      });
+    };
 
     onMounted(() => {
       // connect to chat server and fetch initial messages
-      console.log('Mounted')
-    })
+      console.log('Mounted');
+    });
 
     onBeforeUnmount(() => {
       // disconnect from chat server
-      console.log('Unmounted')
-    })
+      console.log('Unmounted');
+    });
 
     if (!route.query.msg) {
       messages = reactive([
@@ -160,10 +160,10 @@ export default {
           isSent: false,
           avatar: systemAvatar
         }
-      ])
+      ]);
     } else {
-      newMessage.value = route.query.msg
-      sendMessage()
+      newMessage.value = route.query.msg;
+      sendMessage();
     }
 
     return {
@@ -173,9 +173,9 @@ export default {
       chatWrapDom,
       copyMessage,
       sendMessage
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

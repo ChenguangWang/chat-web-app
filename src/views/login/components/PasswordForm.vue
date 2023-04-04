@@ -23,39 +23,39 @@
 </template>
 
 <script>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { setToken } from '@/utils/auth'
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import { setToken } from '@/utils/auth';
 
-import { login } from '@/service/user.js'
+import { login } from '@/service/user.js';
 
 export default {
   name: 'LoginForm',
   setup() {
-    const router = useRouter()
+    const router = useRouter();
     const formState = reactive({
       account: '',
       password: ''
-    })
+    });
 
     const onFinish = async (values) => {
-      const loginRes = await login(values)
+      const loginRes = await login(values);
       if (loginRes.code == 200) {
-        setToken(loginRes.data.token)
-        router.push({ name: 'chat' })
+        setToken(loginRes.data.token);
+        router.push({ name: 'chat' });
       }
-    }
+    };
 
     const onFinishFailed = (errorInfo) => {
-      console.log('Failed:', errorInfo)
-    }
+      console.log('Failed:', errorInfo);
+    };
     return {
       formState,
       onFinish,
       onFinishFailed
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

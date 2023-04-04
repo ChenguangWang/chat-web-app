@@ -15,13 +15,13 @@
 </template>
 
 <script>
-import { RouterView } from 'vue-router'
-import SideWrap from '@/components/side-wrap/SideWrap.vue'
-import Header from '@/components/header/Header.vue'
+import { RouterView } from 'vue-router';
+import SideWrap from '@/components/side-wrap/SideWrap.vue';
+import Header from '@/components/header/Header.vue';
 
 export default {
   components: { SideWrap, Header }
-}
+};
 </script>
 
 <style lang="less" scoped>

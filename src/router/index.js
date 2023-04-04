@@ -1,5 +1,5 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import Navigation from '@/views/Navigation.vue'
+import { createRouter, createWebHistory } from 'vue-router';
+import Navigation from '@/views/Navigation.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +38,6 @@ const router = createRouter({
       component: () => import('@/views/login/Login.vue')
     }
   ]
-})
+});
 
-export default router
+export default router;

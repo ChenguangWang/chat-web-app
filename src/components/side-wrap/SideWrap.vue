@@ -39,17 +39,17 @@
 </template>
 
 <script>
-import { computed } from 'vue'
-import { useRouter } from 'vue-router'
-import { getToken, removeToken } from '@/utils/auth'
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+import { getToken, removeToken } from '@/utils/auth';
 import {
   UserOutlined,
   PlusOutlined,
   ClearOutlined,
   AccountBookOutlined,
   LogoutOutlined
-} from '@ant-design/icons-vue'
-import defaultUser from '@/assets/default_user.jpg'
+} from '@ant-design/icons-vue';
+import defaultUser from '@/assets/default_user.jpg';
 
 export default {
   components: {
@@ -60,31 +60,31 @@ export default {
     LogoutOutlined
   },
   setup() {
-    const router = useRouter()
+    const router = useRouter();
     const routerChange = (name) => {
-      router.push({ name })
-    }
+      router.push({ name });
+    };
 
     // 计算属性 是否存在token
     const hasToken = computed(() => {
-      return getToken() ? true : false
-    })
+      return getToken() ? true : false;
+    });
 
     // 默认头像
-    const defaultUserAvatar = hasToken.value ? defaultUser : ''
+    const defaultUserAvatar = hasToken.value ? defaultUser : '';
 
     const logout = () => {
-      removeToken()
-      router.push({ name: 'login' })
-    }
+      removeToken();
+      router.push({ name: 'login' });
+    };
     return {
       hasToken,
       defaultUserAvatar,
       logout,
       routerChange
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

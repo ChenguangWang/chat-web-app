@@ -26,18 +26,18 @@
 </template>
 
 <script>
-import { UserOutlined } from '@ant-design/icons-vue'
-import { ref } from 'vue'
+import { UserOutlined } from '@ant-design/icons-vue';
+import { ref } from 'vue';
 
 export default {
   components: { UserOutlined },
   setup() {
-    const checked = ref(true)
+    const checked = ref(true);
     return {
       checked
-    }
+    };
   }
-}
+};
 </script>
 
 <style lang="less" scoped>

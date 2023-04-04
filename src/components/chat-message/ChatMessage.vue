@@ -2,13 +2,17 @@
   <div class="chat-room">
     <h1>{{ title }}</h1>
     <ul class="chat-messages">
-      <li v-for="message in messages" :key="message.id" :class="{ 'sent': message.isSent, 'received': !message.isSent }">
+      <li
+        v-for="message in messages"
+        :key="message.id"
+        :class="{ sent: message.isSent, received: !message.isSent }"
+      >
         <div class="message-author">{{ message.author }}</div>
         <div class="message-text">{{ message.text }}</div>
       </li>
     </ul>
     <form class="chat-form" @submit.prevent="sendMessage">
-      <input v-model="newMessage" placeholder="Type your message here...">
+      <input v-model="newMessage" placeholder="Type your message here..." />
       <button type="submit">Send</button>
     </form>
   </div>
@@ -59,7 +63,7 @@ export default {
       sendMessage
     };
   }
-}
+};
 </script>
 
 <style>
