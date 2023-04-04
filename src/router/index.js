@@ -6,7 +6,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/chat',
+      redirect: '/home',
       name: 'Navigation',
       component: Navigation,
       children: [
