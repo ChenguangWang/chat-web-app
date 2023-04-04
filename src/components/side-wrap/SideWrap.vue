@@ -13,9 +13,12 @@
           <template #icon><UserOutlined /></template>
         </a-avatar>
         <br />
-        <a-button class="login-btn" v-show="!hasToken" type="text" @click="routerChange('login')"
-          >点击登录</a-button
-        >
+        <a-button class="login-btn" v-show="!hasToken" type="text" @click="routerChange('login')">
+          点击登录
+        </a-button>
+        <a-button class="login-btn" v-show="hasToken" type="text" @click="routerChange('userInfo')">
+          个人信息
+        </a-button>
       </div>
     </div>
     <div class="session-wrap">

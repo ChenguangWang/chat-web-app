@@ -10,8 +10,8 @@
       </div>
 
       <a-tabs v-model:activeKey="activeKey">
-        <a-tab-pane key="2" tab="密码登录"></a-tab-pane>
         <a-tab-pane key="1" tab="验证码登录"></a-tab-pane>
+        <a-tab-pane key="2" tab="密码登录"></a-tab-pane>
       </a-tabs>
 
       <div class="container-login" v-if="activeKey == '1'">
