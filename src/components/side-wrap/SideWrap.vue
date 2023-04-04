@@ -4,8 +4,8 @@
       <div class="logo-wrap">
         <img src="/src/assets/logo.jpg" class="logo-wrap-img" alt="" />
         <div class="logo-wrap-desc">
-          <h4>爱能智慧助手</h4>
-          <span>AITalkAssistant</span>
+          <h4>TalkBot</h4>
+          <span>智能问答机器人</span>
         </div>
       </div>
       <div class="user-wrap">
@@ -138,6 +138,8 @@ export default {
 }
 .option-wrap {
   font-size: 12px;
+  color: #17233d;
+  opacity: 0.8;
   &-item {
     padding: 0 12px;
     height: 38px;

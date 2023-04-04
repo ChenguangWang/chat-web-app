@@ -4,8 +4,8 @@
       <div class="container-logo">
         <img src="@/assets/logo.jpg" />
         <div class="logo-wrap-desc">
-          <h4>爱能智慧助手</h4>
-          <span>AITalkAssistant</span>
+          <h4>TalkBot</h4>
+          <span>智能问答机器人</span>
         </div>
       </div>
 

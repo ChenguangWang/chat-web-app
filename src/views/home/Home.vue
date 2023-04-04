@@ -1,6 +1,6 @@
 <template>
   <div class="home-wrap">
-    <h1 class="title">爱能智慧助手</h1>
+    <h1 class="title">智能问答机器人</h1>
     <div class="home-wrap-guide">
       <div class="guide-item-wrap" v-for="example in exampleData" :key="example.label">
         <h2>
@@ -74,7 +74,7 @@ export default {
     padding-top: 10vh;
     font-weight: 600;
     margin-bottom: 60px;
-    font-size: 40px;
+    font-size: 36px;
   }
   &-guide {
     margin: 0 24px;

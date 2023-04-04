@@ -27,7 +27,7 @@ export default {
   setup() {
     const router = useRouter();
     const drawerVisible = ref(false);
-    const title = ref('爱能智慧助手');
+    const title = ref('TalkBot 聊天机器人');
     const toHome = () => {
       router.push({ name: 'home' });
     };
