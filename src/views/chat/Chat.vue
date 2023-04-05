@@ -30,7 +30,6 @@
       <!-- @pressEnter 回车回调 -->
       <a-textarea
         v-model:value="newMessage"
-        :disabled="disabledInput"
         placeholder="输入消息，Ctrl + Enter 发送"
         @keyup.ctrl.enter="sendMessage"
       />
@@ -99,7 +98,7 @@ export default {
      * 发送信息
      */
     const sendMessage = () => {
-      if (!newMessage.value.trim()) {
+      if (!newMessage.value.trim() || disabledInput.value) {
         return;
       }
       const sendMsg = newMessage.value.trim();
