@@ -6,4 +6,14 @@ import { RouterView } from 'vue-router';
   <RouterView />
 </template>
 
-<style scoped></style>
+<style>
+/* 小屏兼容 */
+@media only screen and (max-width: 768px) {
+  input,
+  textarea,
+  .ant-input,
+  .ivu-select {
+    font-size: 16px !important;
+  }
+}
+</style>
