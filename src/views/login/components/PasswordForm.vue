@@ -42,7 +42,7 @@ export default {
       const loginRes = await login(values);
       if (loginRes.code == 200) {
         setToken(loginRes.data.token);
-        router.push({ name: 'chat' });
+        router.push({ name: 'home' });
       }
     };
 

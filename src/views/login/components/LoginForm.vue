@@ -76,8 +76,7 @@ export default {
         return;
       }
       const param = {
-        phoneNumber: formState.username,
-        codeType: 1
+        phoneNumber: formState.username
       };
       getVerificationCode(param).then((res) => {
         if (res.code == 200) {
@@ -85,18 +84,17 @@ export default {
         }
         codeBtnLoading.value = true;
         timer = setInterval(() => {
+          if (times.value == 0) {
+            codeBtnLoading.value = false;
+            times.value = 60;
+            clearInterval(timer);
+            return;
+          }
           --times.value;
         }, 1000);
       });
     };
 
-    watch(times, (val) => {
-      if (val == 0) {
-        codeBtnLoading.value = false;
-        times.value = 60;
-        clearInterval(timer);
-      }
-    });
     return {
       times,
       codeBtnLoading,

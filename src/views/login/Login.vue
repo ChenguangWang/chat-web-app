@@ -20,9 +20,6 @@
       <div class="container-login" v-if="activeKey == '2'">
         <PasswordForm></PasswordForm>
       </div>
-      <div class="container-login" v-if="activeKey == '3'">
-        <FindPassword></FindPassword>
-      </div>
     </div>
   </div>
 </template>
@@ -30,12 +27,11 @@
 <script>
 import LoginForm from './components/LoginForm.vue';
 import PasswordForm from './components/PasswordForm.vue';
-import FindPassword from './components/FindPassword.vue';
 import { ref } from 'vue';
 
 export default {
   name: 'Login',
-  components: { LoginForm, FindPassword, PasswordForm },
+  components: { LoginForm, PasswordForm },
   setup() {
     const activeKey = ref('2');
     return {
