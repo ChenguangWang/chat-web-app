@@ -38,14 +38,14 @@ class HttpRequest {
         }
         switch (code) {
           case 200:
-            return { data, code };
+            return { data, code, msg };
           case 40000:
             antMessage.warning('登录超时');
             router.push({ name: 'login' });
           default:
             antMessage.destroy();
             antMessage.warning(msg);
-            return { data, code };
+            return { data, code, msg };
         }
       },
       (error) => {

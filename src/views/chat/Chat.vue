@@ -30,6 +30,7 @@
       <!-- @pressEnter 回车回调 -->
       <a-textarea
         v-model:value="newMessage"
+        :disabled="disabledInput"
         placeholder="输入消息，Ctrl + Enter 发送"
         @keyup.ctrl.enter="sendMessage"
       />
@@ -68,6 +69,7 @@ export default {
     const newMessage = ref('');
     const chatWrapDom = ref();
     const loadingImg = loadingGIF;
+    let disabledInput = ref(false);
     let messages = reactive([]);
 
     /**
@@ -108,13 +110,18 @@ export default {
         isSent: true, // 标记消息是否由当前用户发送
         avatar: defaultUserAvatar
       });
-      newMessage.value = '';
+
+      nextTick(() => {
+        newMessage.value = '';
+      });
+      disabledInput.value = true;
 
       let responseMsg = {
         id: Date.now(),
-        author: 'gpt',
+        author: 'AI',
         isSent: false,
         isLoading: true, // 加载中 TODO: 预留的加载口子
+        text: '',
         avatar: systemAvatar
       };
 
@@ -128,13 +135,16 @@ export default {
         userId: '101' // 用户id
       };
       chat(chatParam).then((res) => {
-        console.log('chat=====>>>', res);
-        const { code, data } = res;
+        const { code, data, msg } = res;
         if (code == 200) {
           messages[newLength - 1]['text'] = data.context;
           messages[newLength - 1]['isLoading'] = false;
-          scrollBottom();
+        } else {
+          messages[newLength - 1]['text'] = msg;
+          messages[newLength - 1]['isLoading'] = false;
         }
+        disabledInput.value = false;
+        scrollBottom();
       });
     };
 
@@ -170,6 +180,7 @@ export default {
       messages,
       newMessage,
       chatWrapDom,
+      disabledInput,
       copyMessage,
       sendMessage
     };
