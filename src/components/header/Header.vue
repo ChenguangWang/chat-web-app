@@ -54,7 +54,8 @@ watch(
     if (val.meta) {
       title.value = router.currentRoute.value.meta.name;
     }
-  }
+  },
+  { immediate: true }
 );
 </script>
 
@@ -81,7 +82,6 @@ watch(
     align-items: center;
     justify-content: space-between;
     padding: 0 12px;
-    color: #fff;
   }
   .m-menu-entrance,
   .m-create-session {
