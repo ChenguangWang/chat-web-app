@@ -18,6 +18,9 @@ const router = createRouter({
         {
           path: 'user/info',
           name: 'userInfo',
+          meta: {
+            name: '个人信息'
+          },
           component: () => import('@/views/user-info/UserInfo.vue')
         },
         {

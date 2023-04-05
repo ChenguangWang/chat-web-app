@@ -16,41 +16,46 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { MenuOutlined, PlusOutlined } from '@ant-design/icons-vue';
-import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
+import { onMounted, ref, watch } from 'vue';
 import SideWrap from '@/components/side-wrap/SideWrap.vue';
 
-export default {
-  components: { MenuOutlined, PlusOutlined, SideWrap },
-  setup() {
-    const router = useRouter();
-    const drawerVisible = ref(false);
-    const title = ref('TalkBot 聊天机器人');
-    const toHome = () => {
-      router.push({ name: 'home' });
-    };
-
-    const openMmenu = () => {
-      drawerVisible.value = true;
-    };
-
-    /**
-     * 关闭抽屉
-     */
-    const onDrawerVisibleClose = () => {
-      drawerVisible.value = false;
-    };
-    return {
-      title,
-      drawerVisible,
-      toHome,
-      openMmenu,
-      onDrawerVisibleClose
-    };
-  }
+const router = useRouter();
+const route = useRoute();
+const drawerVisible = ref(false);
+let title = ref('TalkBot 聊天机器人');
+const toHome = () => {
+  router.push({ name: 'home' });
 };
+
+const openMmenu = () => {
+  drawerVisible.value = true;
+};
+
+/**
+ * 关闭抽屉
+ */
+const onDrawerVisibleClose = () => {
+  drawerVisible.value = false;
+};
+
+onMounted(() => {
+  console.log('onMounted====>>>', route, router.currentRoute.value);
+  if (router.currentRoute.value.meta) {
+    title.value = router.currentRoute.value.meta.name;
+  }
+});
+
+watch(
+  () => router.currentRoute.value,
+  (val) => {
+    if (val.meta) {
+      title.value = router.currentRoute.value.meta.name;
+    }
+  }
+);
 </script>
 
 <style lang="less" scoped>
