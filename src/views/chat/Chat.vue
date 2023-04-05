@@ -1,6 +1,5 @@
 <template>
   <div class="chat-room">
-    <header>聊天标题</header>
     <section class="chat-wrap" ref="chatWrapDom">
       <ul class="chat-messages">
         <li
@@ -179,14 +178,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-header {
-  height: 64px;
-  line-height: 64px;
-  font-size: 16px;
-  padding: 0 24px;
-  font-weight: 600;
-  border-bottom: 1px solid rgba(23, 35, 61, 0.1);
-}
 .chat-wrap {
   padding: 24px;
   height: calc(100vh - 188px);

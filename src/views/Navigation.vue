@@ -4,7 +4,7 @@
       <SideWrap></SideWrap>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header>
+      <a-layout-header v-show="showHeader">
         <Header></Header>
       </a-layout-header>
       <a-layout-content>
@@ -14,14 +14,25 @@
   </a-layout>
 </template>
 
-<script>
-import { RouterView } from 'vue-router';
+<script setup>
+import { RouterView, useRouter } from 'vue-router';
 import SideWrap from '@/components/side-wrap/SideWrap.vue';
 import Header from '@/components/header/Header.vue';
+import { ref, watch } from 'vue';
 
-export default {
-  components: { SideWrap, Header }
-};
+const router = useRouter();
+const showHeader = ref(true);
+
+watch(
+  () => router.currentRoute.value,
+  (val) => {
+    if (val.meta) {
+      showHeader.value =
+        router.currentRoute.value.meta && router.currentRoute.value.meta.name ? true : false;
+    }
+  },
+  { immediate: true }
+);
 </script>
 
 <style lang="less" scoped>
@@ -38,16 +49,16 @@ export default {
 }
 
 .ant-layout-header {
-  display: none;
+  // display: none;
+  background: transparent;
   padding: 0;
+  font-size: 16px;
+  font-weight: 600;
 }
 
 @media only screen and (max-width: 768px) {
   .ant-layout-sider {
     display: none;
-  }
-  .ant-layout-header {
-    display: block;
   }
 }
 </style>

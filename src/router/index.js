@@ -26,6 +26,9 @@ const router = createRouter({
         {
           path: 'chat',
           name: 'chat',
+          meta: {
+            name: '会话'
+          },
           component: () => import('@/views/chat/Chat.vue')
         },
         {
