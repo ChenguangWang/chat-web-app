@@ -14,7 +14,7 @@ export const login = (data) => {
 };
 
 /**
- * 获取验证码
+ * 获取注册时验证码
  * @returns
  */
 export const getVerificationCode = (params) => {
@@ -22,6 +22,17 @@ export const getVerificationCode = (params) => {
     url: '/security/verification-code',
     method: 'get',
     params
+  });
+};
+
+/**
+ * 获取修改密码时验证码
+ * @returns
+ */
+export const getVerificationCodeForPass = () => {
+  return axios.request({
+    url: '/security/modify-password-verification-code',
+    method: 'get'
   });
 };
 
@@ -52,7 +63,7 @@ export const modifyPassword = (data) => {
 };
 
 /**
- * 修改密码
+ * 修改帐号
  * @param {*} data
  * @returns
  */
@@ -61,5 +72,17 @@ export const modifyAccount = (data) => {
     url: '/user/modify/account',
     method: 'put',
     data
+  });
+};
+
+/**
+ * 获取用户信息
+ * @param {*} data
+ * @returns
+ */
+export const getUserInfo = (data) => {
+  return axios.request({
+    url: '/user/info',
+    method: 'get'
   });
 };
