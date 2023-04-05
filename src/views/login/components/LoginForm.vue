@@ -60,7 +60,7 @@ export default {
       registerAndLogin(param).then((res) => {
         if (res.code == 200) {
           setToken(res.data.token);
-          router.push({ name: 'chat' });
+          router.push({ name: 'home' });
         }
       });
     };
