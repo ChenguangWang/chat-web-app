@@ -52,11 +52,14 @@ import { message as antMessage } from 'ant-design-vue';
 import { SendOutlined } from '@ant-design/icons-vue';
 import { chat, streamChat } from '@/service/chat';
 import { copyText } from '@/utils/tools.js';
+import { getToken } from '@/utils/auth';
 
 // 静态图片引入
 import defaultUserAvatar from '@/assets/default_user.jpg';
 import systemAvatar from '@/assets/logo.jpg';
 import loadingGIF from '@/assets/loading.gif';
+
+import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 export default {
   components: {
@@ -94,6 +97,9 @@ export default {
       });
     };
 
+    let controller = new AbortController();
+    let signal = controller.signal;
+
     /**
      * 发送信息
      */
@@ -128,22 +134,62 @@ export default {
       scrollBottom();
 
       const chatParam = {
-        context: false, // 上下文
-        message: sendMsg, // 信息
-        sessionId: 'test', // 会话id
-        userId: '101' // 用户id
+        message: sendMsg // 信息
       };
-      chat(chatParam).then((res) => {
-        const { code, data, msg } = res;
-        if (code == 200) {
-          messages[newLength - 1]['text'] = data.context;
-          messages[newLength - 1]['isLoading'] = false;
-        } else {
-          messages[newLength - 1]['text'] = msg;
-          messages[newLength - 1]['isLoading'] = false;
+      // 非流
+      // chat(chatParam).then((res) => {
+      //   const { code, data, msg } = res;
+      //   if (code == 200) {
+      //     messages[newLength - 1]['text'] = data.context;
+      //     messages[newLength - 1]['isLoading'] = false;
+      //   } else {
+      //     messages[newLength - 1]['text'] = msg;
+      //     messages[newLength - 1]['isLoading'] = false;
+      //   }
+      //   disabledInput.value = false;
+      //   scrollBottom();
+      // });
+
+      let msgStreamData = ''; // 拼接流的数据
+      fetchEventSource('/api/stream/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          hi_smart_token_key: getToken()
+        },
+        signal,
+        body: JSON.stringify(chatParam),
+        onopen: async (response) => {
+          if (response.status != 200) {
+            messages[newLength - 1]['text'] = '服务异常';
+            messages[newLength - 1]['isLoading'] = false;
+          }
+          msgStreamData = '';
+          console.log('onopen====>>>', response);
+        },
+        onmessage: (message) => {
+          console.log('message====>>>', message);
+          const streamObj = JSON.parse(message.data);
+          const { code, data } = streamObj;
+          if (code == 200) {
+            const { content } = data;
+            msgStreamData += (content && content.data) || '';
+            messages[newLength - 1]['text'] = msgStreamData + '_';
+            if (messages[newLength - 1]['isLoading']) {
+              messages[newLength - 1]['isLoading'] = false;
+            }
+            scrollBottom();
+          }
+        },
+        onclose: () => {
+          disabledInput.value = false;
+          messages[newLength - 1]['text'] = msgStreamData;
+          console.log('onclose====>>>');
+        },
+        onerror: (err) => {
+          controller.abort();
+          console.log('onerror=====>>>', err);
         }
-        disabledInput.value = false;
-        scrollBottom();
       });
     };
 
@@ -154,6 +200,7 @@ export default {
 
     onBeforeUnmount(() => {
       // disconnect from chat server
+      controller.abort();
       console.log('Unmounted');
     });
 
