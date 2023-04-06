@@ -218,6 +218,7 @@ export default {
       }
       .message-wrap {
         &-operation {
+          display: inline-block;
           &-btn {
             font-size: 12px;
             color: #808695;
