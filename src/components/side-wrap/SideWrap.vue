@@ -1,7 +1,7 @@
 <template>
   <div class="side-wrap">
     <div>
-      <div class="logo-wrap">
+      <div class="logo-wrap" @click="routerChange('home')">
         <img src="/src/assets/logo.jpg" class="logo-wrap-img" alt="" />
         <div class="logo-wrap-desc">
           <h4>TalkBot</h4>
@@ -92,6 +92,7 @@ export default {
   padding: 16px 12px;
   display: flex;
   line-height: normal;
+  cursor: pointer;
   &-img {
     width: 38px;
     height: 38px;
