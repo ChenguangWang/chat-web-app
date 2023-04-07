@@ -160,12 +160,20 @@ export default {
         signal,
         body: JSON.stringify(chatParam),
         onopen: async (response) => {
-          if (response.status != 200) {
-            messages[newLength - 1]['text'] = '服务异常';
-            messages[newLength - 1]['isLoading'] = false;
-          }
-          msgStreamData = '';
           console.log('onopen====>>>', response);
+          msgStreamData = '';
+          messages[newLength - 1]['isLoading'] = false;
+          if (response.status != 200) {
+            switch (response.status) {
+              case 40000:
+                antMessage.warning('登录超时');
+                router.push({ name: 'login' });
+                break;
+              default:
+                msgStreamData = '服务异常';
+                break;
+            }
+          }
         },
         onmessage: (message) => {
           console.log('message====>>>', message);
