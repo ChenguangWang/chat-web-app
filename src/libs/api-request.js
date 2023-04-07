@@ -42,6 +42,7 @@ class HttpRequest {
           case 40000:
             antMessage.warning('登录超时');
             router.push({ name: 'login' });
+            break;
           default:
             antMessage.destroy();
             antMessage.warning(msg);
