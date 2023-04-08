@@ -52,6 +52,9 @@ import { useRouter } from 'vue-router';
 import { uploadFile } from '@/service/file';
 import { SendOutlined } from '@ant-design/icons-vue';
 import Const from './const';
+import { addSession } from '@/service/session.js';
+import { useStore } from 'vuex';
+
 export default {
   components: {
     SendOutlined
@@ -62,6 +65,7 @@ export default {
     const router = useRouter();
     const dragEffect = ref(null);
     const dragContainer = ref(null);
+    const store =  useStore();
     const state = reactive({
       uploading: false,
       uploadProgress: 0,
@@ -136,10 +140,21 @@ export default {
 
     const createSession = (data) => {
       const startMsg = data || inputValue.value;
-      router.push({
-        name: 'chat',
-        query: {
-          msg: startMsg
+      addSession({
+        message: startMsg,
+        sessionType: 1 // 普通对话
+      }).then((res) => {
+        if (res.code == 200) {
+          store.dispatch('session/getList');
+          router.push({
+            name: 'chat',
+            query: {
+              msg: startMsg
+            },
+            params: {
+              id: res.data.session
+            }
+          });
         }
       });
     };

@@ -45,7 +45,7 @@
 
 <script>
 import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import { message as antMessage } from 'ant-design-vue';
@@ -57,6 +57,7 @@ import { copyText } from '@/utils/tools.js';
 import defaultUserAvatar from '@/assets/default_user.jpg';
 import systemAvatar from '@/assets/logo.jpg';
 import loadingGIF from '@/assets/loading.gif';
+import { useStore } from 'vuex';
 
 export default {
   components: {
@@ -147,6 +148,15 @@ export default {
       });
     };
 
+    let store = useStore();
+    const changeEffect = async (id) => {
+        let sessionCode = id || route.params.id;
+        store.commit('session/updateActive', sessionCode);
+        store.commit('session/addToList', {
+            sessionCode
+        });
+    }
+
     onMounted(() => {
       // connect to chat server and fetch initial messages
       console.log('Mounted');
@@ -155,6 +165,10 @@ export default {
     onBeforeUnmount(() => {
       // disconnect from chat server
       console.log('Unmounted');
+    });
+
+    onBeforeRouteUpdate(function (to, from) {
+      changeEffect(to.params.id)
     });
 
     if (!route.query.msg) {

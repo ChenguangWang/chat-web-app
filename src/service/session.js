@@ -56,3 +56,20 @@ export const clearAll = () => {
     data: null
   }); 
 }
+
+/**
+ * 创建会话
+ * @param {*} data 
+ * @returns 
+ */
+export const addSession = (data) => {
+  return axios.request({
+    url: '/session/create',
+    method: 'post',
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    },
+    data
+  });
+};
+  

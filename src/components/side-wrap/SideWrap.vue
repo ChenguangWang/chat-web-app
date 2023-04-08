@@ -22,19 +22,34 @@
       </div>
     </div>
     <div class="session-wrap">
-      <div class="add-btn" @click="createSession"><plus-outlined style="margin-right: 8px" />新建会话</div>
-      
-      <a-spin v-if="loading" />
-      <template v-else>
-        <div v-for="item in sessions" :key="item.sessionCode" :class="activeSession == item.sessionCode ? 'session-wrap-item active' : 'session-wrap-item'">
-          <p @click=" chooseSession(item)"><i :class="item.sessionType === 2 ? 'iconfont icon-pdf' : 'iconfont icon-duihua'"></i> {{ item.showTitle }}</p>
-          <i class="iconfont icon-quxiao" @click="deleteSession(item)"></i>
-        </div>
-      </template>
+      <div class="add-btn" @click="createSession">
+        <plus-outlined style="margin-right: 8px" />新建会话
+      </div>
+
+      <div class="session-content">
+        <a-spin v-if="loading" />
+        <template v-else>
+          <div
+            v-for="item in sessions"
+            :key="item.sessionCode"
+            :class="
+              activeSession == item.sessionCode ? 'session-wrap-item active' : 'session-wrap-item'
+            "
+          >
+            <p @click="chooseSession(item)">
+              <i :class="item.sessionType === 2 ? 'iconfont icon-pdf' : 'iconfont icon-duihua'"></i>
+              {{ item.showTitle }}
+            </p>
+            <i class="iconfont icon-quxiao" @click="deleteSession(item)"></i>
+          </div>
+        </template>
+      </div>
     </div>
     <div class="option-wrap">
-      <div class="option-wrap-item" @click="clearAll"><clear-outlined /><span class="btn-text">清除会话</span></div>
-     <!--  <div class="option-wrap-item" @click="routerChange('upgrade')">
+      <div class="option-wrap-item" @click="clearAll">
+        <clear-outlined /><span class="btn-text">清除会话</span>
+      </div>
+      <!--  <div class="option-wrap-item" @click="routerChange('upgrade')">
         <account-book-outlined /><span class="btn-text">升级功能</span>
       </div> -->
       <div class="option-wrap-item" @click="logout">
@@ -68,7 +83,7 @@ export default {
     LogoutOutlined
   },
   setup() {
-    const store = useStore()
+    const store = useStore();
     const router = useRouter();
     const routerChange = (name) => {
       router.push({ name });
@@ -76,36 +91,35 @@ export default {
 
     onBeforeMount(async () => {
       //获取session列表
-      await store.dispatch('session/getList', {})
+      await store.dispatch('session/getList', {});
     });
-   
+
     //选择会话
-    const chooseSession = (item) =>{
+    const chooseSession = (item) => {
       router.push({
         name: item.sessionType === 1 ? 'chat' : 'file',
         params: {
           id: item.sessionCode
         }
-      })
-      store.commit('session/updateActive', item.sessionCode)
-    }
+      });
+      store.commit('session/updateActive', item.sessionCode);
+    };
 
     //选择会话
-    const deleteSession = (item) =>{
+    const deleteSession = (item) => {
       Modal.confirm({
         title: item.showTitle,
         content: `删除后无法恢复,确认删除？`,
         okText: '确认',
         cancelText: '取消',
-        onOk: async ()=>{
-          await store.dispatch('session/delete',item.sessionCode)
+        onOk: async () => {
+          await store.dispatch('session/delete', item.sessionCode);
           router.push({
             name: 'home'
-          })
+          });
         }
-      })
-    }
-
+      });
+    };
 
     // 计算属性 是否存在token
     const hasToken = computed(() => {
@@ -113,12 +127,12 @@ export default {
     });
 
     // 返回首页进行新的对话
-    const createSession = ()=>{
+    const createSession = () => {
       router.push({
-        name:'home'
-      })
-      store.commit('session/updateActive', '')
-    }
+        name: 'home'
+      });
+      store.commit('session/updateActive', '');
+    };
 
     const clearAll = () => {
       Modal.confirm({
@@ -126,14 +140,14 @@ export default {
         content: `删除后无法恢复,确认删除？`,
         okText: '确认',
         cancelText: '取消',
-        onOk: async ()=>{
-          await store.dispatch('session/clearAll')
+        onOk: async () => {
+          await store.dispatch('session/clearAll');
           router.push({
             name: 'home'
-          })
+          });
         }
-      })
-    }
+      });
+    };
 
     // 默认头像
     const defaultUserAvatar = hasToken.value ? defaultUser : '';
@@ -145,10 +159,10 @@ export default {
     return {
       hasToken,
       sessions: computed(() => {
-        return  store.state.session.list
+        return store.state.session.list;
       }),
-      activeSession: computed(()=> store.state.session.active),
-      loading: computed(()=> store.state.session.loading),
+      activeSession: computed(() => store.state.session.active),
+      loading: computed(() => store.state.session.loading),
       defaultUserAvatar,
       logout,
       clearAll,
@@ -193,8 +207,8 @@ export default {
 
 .session-wrap {
   height: calc(100vh - 312px);
-  overflow: scroll;
   padding: 0;
+  overflow: hidden;
   text-align: center;
   font-size: 12px;
   border-bottom: 1px solid rgba(23, 35, 61, 0.1);
@@ -215,38 +229,53 @@ export default {
       color: #2285f0;
     }
   }
+  .session-content {
+    position: relative;
+    height: calc(100% - 38px);
+    overflow: scroll;
+    .ant-spin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
 
-.session-wrap-item{
-  text-align: left;
-  position: relative;
-  height: 36px;
-  padding: 0 25px 0 15px;
-  p{
-    vertical-align: middle;
-    font-size: 12px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    height: 34px;
-    line-height: 34px;
-    margin: 0 !important;
-    white-space: nowrap;
-    cursor: pointer;
-    margin-block: 4px;
+  .session-wrap-item {
+    text-align: left;
+    position: relative;
+    height: 36px;
+    padding: 0 25px 0 15px;
+    p {
+      vertical-align: middle;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      height: 34px;
+      line-height: 34px;
+      margin: 0 !important;
+      white-space: nowrap;
+      cursor: pointer;
+      margin-block: 4px;
+    }
+    .icon-quxiao {
+      display: none;
+      position: absolute;
+      cursor: pointer;
+      right: 6px;
+      top: 6px;
+      color: #aaa;
+    }
+    &.active {
+      background-color: #ddd;
+    }
+    &:hover {
+      color: #2285f0;
+      .icon-quxiao {
+        display: block;
+      }
+    }
   }
-  &:hover{
-    color: #2285f0;
-  }
-  &.active {
-    background-color: #ddd;
-  }
-  .icon-quxiao{
-    position: absolute;
-    cursor: pointer;
-    right: 6px;
-    top: 6px;
-    color: #aaa;
-  }
-}
 }
 .option-wrap {
   font-size: 12px;
