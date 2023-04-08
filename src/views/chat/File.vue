@@ -1,5 +1,8 @@
 <template>
   <div class="chat-room">
+    <div class="detail-info" v-if="detail?.parseFinish">
+      {{ detail?.title }}
+    </div>
     <section class="chat-wrap" ref="chatWrapDom">
       <ul class="chat-messages">
         <li
@@ -44,7 +47,7 @@
 </template>
 
 <script>
-import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue';
+import { reactive, onMounted, onBeforeUnmount, ref, nextTick, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
@@ -78,14 +81,11 @@ export default {
     onMounted(async () => {
       let { list, detail } = store.state.session;
       let sessionCode = route.params.id;
-      await store.dispatch('session/getDetail', sessionCode);
       store.commit('session/updateActive', route.params.id);
+      await store.dispatch('session/getDetail', sessionCode);
       store.commit('session/addToList', {
         sessionCode
       });
-      // getFileSession(route.params.id).then(res=>{
-      //   console.log(res)
-      // })
     });
 
     /**
@@ -176,15 +176,15 @@ export default {
 
     if (!route.query.msg) {
       messages = reactive([
-        {
-          id: Date.now(),
-          author: 'AI',
-          text: `你好！我是基于人工智能诞生的AI对话助手。\n
-我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
-          // 以下是一些经典案例：\n`,
-          isSent: false,
-          avatar: systemAvatar
-        }
+//         {
+//           id: Date.now(),
+//           author: 'AI',
+//           text: `你好！我是基于人工智能诞生的AI对话助手。\n
+// 我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
+//           // 以下是一些经典案例：\n`,
+//           isSent: false,
+//           avatar: systemAvatar
+//         }
       ]);
     } else {
       newMessage.value = route.query.msg;
@@ -197,6 +197,7 @@ export default {
       newMessage,
       chatWrapDom,
       disabledInput,
+      detail: computed(() => store.state.session.detail),
       copyMessage,
       sendMessage
     };
@@ -286,6 +287,13 @@ export default {
   }
 }
 
+.detail-info {
+  height: 30px;
+  line-height: 30px;
+  padding: 0 24px;
+  color: #fff;
+  background-color: rgba(219, 28, 12, 0.44);
+}
 .md-editor {
   --md-bk-color: transparent;
 }

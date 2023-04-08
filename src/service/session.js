@@ -46,3 +46,13 @@ export const getSessionDetail = (id) => {
     data: null
   });
 }
+
+
+export const clearAll = () => {
+  return axios.request({
+    // baseURL: 'https://api.chat-info.com.cn/api',
+    url: '/session',
+    method: 'DELETE',
+    data: null
+  }); 
+}

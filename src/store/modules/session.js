@@ -2,6 +2,7 @@
  * 会话相关数据
  */
 import { getSessionList, deleteSession, getSessionDetail } from '@/service/session';
+import { clearAll } from '../../service/session';
 
 
 export default {
@@ -39,6 +40,16 @@ export default {
     }
   },
   actions: {
+    async clearAll({commit}, payload) {
+      try{
+        const {code, data} = await clearAll(payload)
+        if(code === 200){
+          commit('updateList', []);
+        }
+      }catch(e){
+      }
+    },
+
     async getList({commit}, payload) {
       try{
         commit('updateLoading', true);
@@ -55,17 +66,17 @@ export default {
       try{
         const {code, data} = await getSessionDetail(payload)
         if(code === 200){
+          if(!data.parseFinish){
+
+          }
           commit('updateDetail', data)
         }
       }catch(e){
 
       }
-
     },
-
-    addSession({commit}, payload) {
-       
-    },
+    
+    // 删除制定会话
     async delete({commit, state}, payload){
       try{
         const {code, data} = await deleteSession(payload)

@@ -33,8 +33,8 @@
       </template>
     </div>
     <div class="option-wrap">
-      <!-- <div class="option-wrap-item"><clear-outlined /><span class="btn-text">清除会话</span></div>
-      <div class="option-wrap-item" @click="routerChange('upgrade')">
+      <div class="option-wrap-item" @click="clearAll"><clear-outlined /><span class="btn-text">清除会话</span></div>
+     <!--  <div class="option-wrap-item" @click="routerChange('upgrade')">
         <account-book-outlined /><span class="btn-text">升级功能</span>
       </div> -->
       <div class="option-wrap-item" @click="logout">
@@ -120,6 +120,20 @@ export default {
       store.commit('session/updateActive', '')
     }
 
+    const clearAll = () => {
+      Modal.confirm({
+        title: '清除所有会话？',
+        content: `删除后无法恢复,确认删除？`,
+        okText: '确认',
+        cancelText: '取消',
+        onOk: async ()=>{
+          await store.dispatch('session/clearAll')
+          router.push({
+            name: 'home'
+          })
+        }
+      })
+    }
 
     // 默认头像
     const defaultUserAvatar = hasToken.value ? defaultUser : '';
@@ -137,6 +151,7 @@ export default {
       loading: computed(()=> store.state.session.loading),
       defaultUserAvatar,
       logout,
+      clearAll,
       routerChange,
       deleteSession,
       createSession,
