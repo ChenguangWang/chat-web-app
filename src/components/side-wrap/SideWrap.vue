@@ -22,9 +22,15 @@
       </div>
     </div>
     <div class="session-wrap">
-      <!-- <div class="session-wrap-title">当前会话</div>
-      <div class="add-btn"><plus-outlined style="margin-right: 8px" />新建会话</div> -->
-      <div class="session-wrap-item"></div>
+      <div class="add-btn"><plus-outlined style="margin-right: 8px" />新建会话</div>
+      
+      <a-spin v-if="loading" />
+      <template v-else>
+        <div v-for="item in sessions" :key="item.sessionCode" class="session-wrap-item" @click=" chooseSession(item)">
+          <i :class="item.sessionType === 2 ? 'iconfont icon-pdf' : 'iconfont icon-duihua'"></i> {{ item.showTitle }}
+          <i class="iconfont icon-quxiao"></i>
+        </div>
+      </template>
     </div>
     <div class="option-wrap">
       <!-- <div class="option-wrap-item"><clear-outlined /><span class="btn-text">清除会话</span></div>
@@ -39,7 +45,7 @@
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, onBeforeMount } from 'vue';
 import { useRouter } from 'vue-router';
 import { getToken, removeToken } from '@/utils/auth';
 import {
@@ -50,6 +56,7 @@ import {
   LogoutOutlined
 } from '@ant-design/icons-vue';
 import defaultUser from '@/assets/default_user.jpg';
+import { useStore } from 'vuex';
 
 export default {
   components: {
@@ -60,10 +67,28 @@ export default {
     LogoutOutlined
   },
   setup() {
+    const store = useStore()
     const router = useRouter();
     const routerChange = (name) => {
       router.push({ name });
     };
+
+    onBeforeMount(() => {
+      //获取session列表
+      store.dispatch('session/getList', {})
+    });
+   
+
+    const chooseSession = (item) =>{
+      console.log('choose', item)
+      router.push({
+        name: item.sessionType === 1 ? 'chat' : 'file',
+        params: {
+          id: item.sessionCode
+        }
+      })
+    }
+
 
     // 计算属性 是否存在token
     const hasToken = computed(() => {
@@ -79,9 +104,14 @@ export default {
     };
     return {
       hasToken,
+      sessions: computed(() => {
+        return  store.state.session.list
+      }),
+      loading: computed(()=> store.state.session.loading),
       defaultUserAvatar,
       logout,
-      routerChange
+      routerChange,
+      chooseSession
     };
   }
 };
@@ -123,6 +153,7 @@ export default {
   padding: 0 12px;
   font-size: 12px;
   border-bottom: 1px solid rgba(23, 35, 61, 0.1);
+
   &-title,
   .add-btn {
     height: 38px;
@@ -136,6 +167,24 @@ export default {
       color: #2285f0;
     }
   }
+
+.session-wrap-item{
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  height: 28px;
+  line-height: 28px;
+  white-space: nowrap;
+  cursor: pointer;
+  margin-block: 4px;
+  position: relative;
+  .icon-quxiao{
+    position: absolute;
+    right: 0px;
+    top: 3px;
+    color: #aaa;
+  }
+}
 }
 .option-wrap {
   font-size: 12px;

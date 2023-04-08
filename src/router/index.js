@@ -32,6 +32,14 @@ const router = createRouter({
           component: () => import('@/views/chat/Chat.vue')
         },
         {
+          path: 'file/:id',
+          name: 'file',
+          meta: {
+            name: '会话'
+          },
+          component: () => import('@/views/chat/File.vue')
+        },
+        {
           path: 'upgrade',
           name: 'upgrade',
           component: () => import('@/views/upgrade/Upgrade.vue')
