@@ -1,6 +1,6 @@
 <template>
   <div class="chat-room">
-    <div class="detail-info" v-if="detail?.parseFinish">
+    <div class="detail-info" v-if="detail && !detail.parseFinish">
       {{ detail?.title }}
     </div>
     <section class="chat-wrap" ref="chatWrapDom">
@@ -47,14 +47,13 @@
 </template>
 
 <script>
-import { reactive, onMounted, onBeforeUnmount, ref, nextTick, computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { reactive, onMounted, onBeforeUnmount, ref, nextTick, computed, watch, watchEffect } from 'vue';
+import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import { message as antMessage } from 'ant-design-vue';
 import { SendOutlined } from '@ant-design/icons-vue';
 import { chat, streamChat } from '@/service/chat';
-import { getFileSession } from '@/service/file';
 import { copyText } from '@/utils/tools.js';
 
 // 静态图片引入
@@ -75,17 +74,32 @@ export default {
     const loadingImg = loadingGIF;
     let disabledInput = ref(false);
     let messages = reactive([]);
+    let sseSchedule = ref(null)
 
     let store = useStore();
 
-    onMounted(async () => {
-      let { list, detail } = store.state.session;
-      let sessionCode = route.params.id;
-      store.commit('session/updateActive', route.params.id);
-      await store.dispatch('session/getDetail', sessionCode);
-      store.commit('session/addToList', {
-        sessionCode
-      });
+    const changeEffect = async (id) => {
+        let sessionCode = id || route.params.id;
+        store.commit('session/updateActive', sessionCode);
+        await store.dispatch('session/getDetail', sessionCode);
+        store.commit('session/addToList', {
+            sessionCode
+        });
+        sseSchedule.value = new EventSource('/sse/session/schedule/' + sessionCode);
+        sseSchedule.value.onmessage = (event) => {
+            console.log('sse', event)
+        }
+    }
+
+    onMounted(changeEffect)
+
+    onBeforeUnmount(() => {
+      sseSchedule.value.close();
+    });
+
+    onBeforeRouteUpdate(function (to, from) {
+      sseSchedule.value.close();
+      changeEffect(to.params.id)
     });
 
     /**
