@@ -30,7 +30,8 @@ export default defineConfig({
       '/sse': {
         target: 'http://47.88.11.59:8081', // 代理的目标地址
         ws: false,
-        changeOrigin: true
+        changeOrigin: true,
+        compress:false
       },
       '/api': {
         // target: 'https://hi-chat.com.cn', // 代理的目标地址
