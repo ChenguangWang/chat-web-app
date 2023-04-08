@@ -1,7 +1,7 @@
 /**
  * 会话相关数据
  */
-import { getSessionList } from '@/service/session';
+import { getSessionList, deleteSession, getSessionDetail } from '@/service/session';
 
 
 export default {
@@ -10,11 +10,26 @@ export default {
   state: {
     loading: true, //
     active: '', //sessionCode
+    detail: null, //当前打开的会话详情
     list: [],//会话列表
   },
   mutations: {
     updateActive(state, val){
       state.active = val
+    },
+    updateDetail(state, val){
+      state.detail = val;
+    },
+    addToList(state, val){
+      if(state.list.filter(item => item.sessionCode === val.sessionCode).length > 0){
+        return;
+      }
+      state.list.unshift({
+        ...val,
+        sessionType: state.detail.sessionType,
+        showTitle: state.detail.title,
+
+      })
     },
     updateLoading(state, val) {
       state.loading = val
@@ -27,7 +42,7 @@ export default {
     async getList({commit}, payload) {
       try{
         commit('updateLoading', true);
-       const {code, data} = await getSessionList(payload)
+        const {code, data} = await getSessionList(payload)
         if(code === 200){
           commit('updateList', data.data);
           commit('updateLoading', false);
@@ -36,11 +51,31 @@ export default {
         commit('updateLoading', false);
       }
     },
+    async getDetail({commit}, payload){
+      try{
+        const {code, data} = await getSessionDetail(payload)
+        if(code === 200){
+          commit('updateDetail', data)
+        }
+      }catch(e){
+
+      }
+
+    },
+
     addSession({commit}, payload) {
        
     },
-    removeSession({commit}, payload){
-
+    async delete({commit, state}, payload){
+      try{
+        const {code, data} = await deleteSession(payload)
+        if(code === 200){
+          let list = state.list.filter(item => item.sessionCode !== payload);
+          commit('updateList', list);
+        }
+      }catch(e){
+        console.log(e, '删除失败');
+      }
     }
   },
   getters: {

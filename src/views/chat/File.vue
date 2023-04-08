@@ -51,7 +51,7 @@ import 'md-editor-v3/lib/style.css';
 import { message as antMessage } from 'ant-design-vue';
 import { SendOutlined } from '@ant-design/icons-vue';
 import { chat, streamChat } from '@/service/chat';
-import {getFileSession} from '@/service/file';
+import { getFileSession } from '@/service/file';
 import { copyText } from '@/utils/tools.js';
 
 // 静态图片引入
@@ -73,15 +73,20 @@ export default {
     let disabledInput = ref(false);
     let messages = reactive([]);
 
-    let store = useStore()
-    console.log(store)
+    let store = useStore();
 
-
-    onMounted(()=>{
-        getFileSession(route.params.id).then(res=>{
-          console.log(res)
-        })
-    })
+    onMounted(async () => {
+      let { list, detail } = store.state.session;
+      let sessionCode = route.params.id;
+      await store.dispatch('session/getDetail', sessionCode);
+      store.commit('session/updateActive', route.params.id);
+      store.commit('session/addToList', {
+        sessionCode
+      });
+      // getFileSession(route.params.id).then(res=>{
+      //   console.log(res)
+      // })
+    });
 
     /**
      * 滚动到底部

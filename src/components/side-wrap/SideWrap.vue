@@ -22,13 +22,13 @@
       </div>
     </div>
     <div class="session-wrap">
-      <div class="add-btn"><plus-outlined style="margin-right: 8px" />新建会话</div>
+      <div class="add-btn" @click="createSession"><plus-outlined style="margin-right: 8px" />新建会话</div>
       
       <a-spin v-if="loading" />
       <template v-else>
-        <div v-for="item in sessions" :key="item.sessionCode" class="session-wrap-item" @click=" chooseSession(item)">
-          <i :class="item.sessionType === 2 ? 'iconfont icon-pdf' : 'iconfont icon-duihua'"></i> {{ item.showTitle }}
-          <i class="iconfont icon-quxiao"></i>
+        <div v-for="item in sessions" :key="item.sessionCode" :class="activeSession == item.sessionCode ? 'session-wrap-item active' : 'session-wrap-item'">
+          <p @click=" chooseSession(item)"><i :class="item.sessionType === 2 ? 'iconfont icon-pdf' : 'iconfont icon-duihua'"></i> {{ item.showTitle }}</p>
+          <i class="iconfont icon-quxiao" @click="deleteSession(item)"></i>
         </div>
       </template>
     </div>
@@ -57,6 +57,7 @@ import {
 } from '@ant-design/icons-vue';
 import defaultUser from '@/assets/default_user.jpg';
 import { useStore } from 'vuex';
+import { Modal } from 'ant-design-vue';
 
 export default {
   components: {
@@ -73,18 +74,34 @@ export default {
       router.push({ name });
     };
 
-    onBeforeMount(() => {
+    onBeforeMount(async () => {
       //获取session列表
-      store.dispatch('session/getList', {})
+      await store.dispatch('session/getList', {})
     });
    
-
+    //选择会话
     const chooseSession = (item) =>{
-      console.log('choose', item)
       router.push({
         name: item.sessionType === 1 ? 'chat' : 'file',
         params: {
           id: item.sessionCode
+        }
+      })
+      store.commit('session/updateActive', item.sessionCode)
+    }
+
+    //选择会话
+    const deleteSession = (item) =>{
+      Modal.confirm({
+        title: item.showTitle,
+        content: `删除后无法恢复,确认删除？`,
+        okText: '确认',
+        cancelText: '取消',
+        onOk: async ()=>{
+          await store.dispatch('session/delete',item.sessionCode)
+          router.push({
+            name: 'home'
+          })
         }
       })
     }
@@ -94,6 +111,15 @@ export default {
     const hasToken = computed(() => {
       return getToken() ? true : false;
     });
+
+    // 返回首页进行新的对话
+    const createSession = ()=>{
+      router.push({
+        name:'home'
+      })
+      store.commit('session/updateActive', '')
+    }
+
 
     // 默认头像
     const defaultUserAvatar = hasToken.value ? defaultUser : '';
@@ -107,10 +133,13 @@ export default {
       sessions: computed(() => {
         return  store.state.session.list
       }),
+      activeSession: computed(()=> store.state.session.active),
       loading: computed(()=> store.state.session.loading),
       defaultUserAvatar,
       logout,
       routerChange,
+      deleteSession,
+      createSession,
       chooseSession
     };
   }
@@ -150,14 +179,18 @@ export default {
 .session-wrap {
   height: calc(100vh - 312px);
   overflow: scroll;
-  padding: 0 12px;
+  padding: 0;
+  text-align: center;
   font-size: 12px;
   border-bottom: 1px solid rgba(23, 35, 61, 0.1);
 
   &-title,
   .add-btn {
+    display: block;
+    text-align: left;
     height: 38px;
     line-height: 38px;
+    margin-left: 10px;
     font-weight: 500;
   }
   .add-btn {
@@ -169,19 +202,33 @@ export default {
   }
 
 .session-wrap-item{
-  font-size: 14px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 28px;
-  line-height: 28px;
-  white-space: nowrap;
-  cursor: pointer;
-  margin-block: 4px;
+  text-align: left;
   position: relative;
+  height: 36px;
+  padding: 0 25px 0 15px;
+  p{
+    vertical-align: middle;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    height: 34px;
+    line-height: 34px;
+    margin: 0 !important;
+    white-space: nowrap;
+    cursor: pointer;
+    margin-block: 4px;
+  }
+  &:hover{
+    color: #2285f0;
+  }
+  &.active {
+    background-color: #ddd;
+  }
   .icon-quxiao{
     position: absolute;
-    right: 0px;
-    top: 3px;
+    cursor: pointer;
+    right: 6px;
+    top: 6px;
     color: #aaa;
   }
 }
