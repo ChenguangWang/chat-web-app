@@ -57,10 +57,12 @@ export default () => {
 
   onBeforeRouteUpdate(() => {
     controller.value?.abort();
+    disabledInput.value = false
   });
 
   onBeforeUnmount(() => {
     controller.value?.abort();
+    disabledInput.value = false
   });
 
   /**
@@ -146,6 +148,7 @@ export default () => {
           messages[newLength - 1]['text'] = msgStreamData;
         },
         onerror: (err) => {
+          disabledInput.value = false
           controller.value.abort();
         },
         onmessage: (message) => {
