@@ -41,7 +41,6 @@ export default {
   computed: {},
   methods: {},
   mounted() {
-    document.title = '登陆';
   }
 };
 </script>

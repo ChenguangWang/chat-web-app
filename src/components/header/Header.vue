@@ -1,7 +1,7 @@
 <template>
   <div class="chat-header-wrap">
     <menu-outlined class="m-menu-entrance" @click="openMmenu" />
-    {{ title }}
+    <span class="header-title">{{ title }}</span>
     <plus-outlined class="m-create-session" @click="toHome" />
     <a-drawer
       :width="200"
@@ -19,9 +19,11 @@
 <script setup>
 import { MenuOutlined, PlusOutlined } from '@ant-design/icons-vue';
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref, watch } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import SideWrap from '@/components/side-wrap/SideWrap.vue';
+import { useStore } from 'vuex';
 
+const store = useStore();
 const router = useRouter();
 const route = useRoute();
 const drawerVisible = ref(false);
@@ -41,18 +43,36 @@ const onDrawerVisibleClose = () => {
   drawerVisible.value = false;
 };
 
-onMounted(() => {
-  console.log('onMounted====>>>', route, router.currentRoute.value);
+const activeSession = computed(()=> {
+   const active = store.state.session.active;
+   const list = store.state.session.list;
+   let findRes = list && list.find(item => item.sessionCode == active);
+   return findRes;
+}) 
+
+const setTitle = () => {
   if (router.currentRoute.value.meta) {
-    title.value = router.currentRoute.value.meta.name;
+    switch (router.currentRoute.value.name) {
+      case 'chat':
+      case 'file':
+        title.value = activeSession.value?.showTitle || '会话';
+      break;
+      default:
+        title.value = router.currentRoute.value.meta.name;
+        break;
+    }
   }
+}
+
+onMounted(() => {
+  setTitle();
 });
 
 watch(
   () => router.currentRoute.value,
   (val) => {
     if (val.meta) {
-      title.value = router.currentRoute.value.meta.name;
+      setTitle();
     }
   },
   { immediate: true }
@@ -69,6 +89,14 @@ watch(
   border-bottom: 1px solid rgba(23, 35, 61, 0.1);
 }
 
+.header-title {
+  display: inline-block;
+  width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .m-menu-entrance,
 .m-create-session {
   display: none;
@@ -83,6 +111,10 @@ watch(
     justify-content: space-between;
     padding: 0 12px;
   }
+  .header-title {
+    padding: 12px;
+  }
+
   .m-menu-entrance,
   .m-create-session {
     display: block;

@@ -60,5 +60,8 @@ watch(
   .ant-layout-sider {
     display: none;
   }
+  .ant-layout-header {
+    display: block !important;
+  }
 }
 </style>
