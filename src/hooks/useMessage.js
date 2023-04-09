@@ -25,20 +25,20 @@ export default () => {
         let { history } = detail;
         if (detail.sessionType === SESSIONTYPE.chat) {
           // 后期需要处理message list;
-          if (!history.total) {
-            if (router.query.msg) {
-              newMessage.value = router.query.msg;
+        //   if (!history.total) {
+        //     if (router.query.msg) {
+              newMessage.value = router.query.msg || detail.title;
               sendMessage();
-            } else {
-              messages[0] = {
-                id: Date.now(),
-                author: 'AI',
-                text: `你好！我是基于人工智能诞生的AI对话助手。\n我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
-                isSent: false,
-                avatar: systemAvatar
-              };
-            }
-          }
+            // } else {
+            //   messages[0] = {
+            //     id: Date.now(),
+            //     author: 'AI',
+            //     text: `你好！我是基于人工智能诞生的AI对话助手。\n我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
+            //     isSent: false,
+            //     avatar: systemAvatar
+            //   };
+            // }
+        //   }
         } else {
           // 后期需要处理message list;
           if (!history.total && detail.parseFinish) {
