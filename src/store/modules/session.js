@@ -66,6 +66,7 @@ export default {
       try{
         const {code, data} = await getSessionDetail(payload)
         if(code === 200){
+          console.log('detail', data)
           if(!data.parseFinish){
 
           }

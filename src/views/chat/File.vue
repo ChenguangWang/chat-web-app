@@ -1,7 +1,8 @@
 <template>
   <div class="chat-room">
-    <div class="detail-info" v-if="detail && !detail.parseFinish">
-      {{ detail?.title }}
+    <div class="detail-info" v-if="detail && detail.parseFinish">
+      <h5> {{ progress ? '解析中:'+ progress+'%' : '解析完成' }} 【{{ detail?.title }}】</h5>
+      <p :style="{width: progress ? progress+'%' : '100%'}"></p>
     </div>
     <section class="chat-wrap" ref="chatWrapDom">
       <ul class="chat-messages">
@@ -61,6 +62,7 @@ import defaultUserAvatar from '@/assets/default_user.jpg';
 import systemAvatar from '@/assets/logo.jpg';
 import loadingGIF from '@/assets/loading.gif';
 import { useStore } from 'vuex';
+import useSchedule from '../../hooks/useSchedule'
 
 export default {
   components: {
@@ -74,9 +76,8 @@ export default {
     const loadingImg = loadingGIF;
     let disabledInput = ref(false);
     let messages = reactive([]);
-    let sseSchedule = ref(null)
-
     let store = useStore();
+    let {progress, stepText, error} = useSchedule()
 
     const changeEffect = async (id) => {
         let sessionCode = id || route.params.id;
@@ -85,20 +86,11 @@ export default {
         store.commit('session/addToList', {
             sessionCode
         });
-        sseSchedule.value = new EventSource('/sse/session/schedule/' + sessionCode);
-        sseSchedule.value.onmessage = (event) => {
-            console.log('sse', event)
-        }
     }
 
     onMounted(changeEffect)
 
-    onBeforeUnmount(() => {
-      sseSchedule.value.close();
-    });
-
     onBeforeRouteUpdate(function (to, from) {
-      sseSchedule.value.close();
       changeEffect(to.params.id)
     });
 
@@ -207,6 +199,8 @@ export default {
 
     return {
       loadingImg,
+      progress, //解析进度
+
       messages,
       newMessage,
       chatWrapDom,
@@ -305,8 +299,23 @@ export default {
   height: 30px;
   line-height: 30px;
   padding: 0 24px;
-  color: #fff;
-  background-color: rgba(219, 28, 12, 0.44);
+  position: relative;
+  h5{
+    color: #fff;
+    font-weight: 400;
+    position: absolute;
+    z-index: 1;
+  }
+  p{
+    height: 100%;
+    width: 0;margin: 0;
+    left: 0;
+    top: 0;
+    z-index: 0;
+    bottom: 0;
+    background-color: rgba(219, 28, 12, 0.44);
+    position: absolute;
+  }
 }
 .md-editor {
   --md-bk-color: transparent;
