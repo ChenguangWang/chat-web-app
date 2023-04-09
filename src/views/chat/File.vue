@@ -1,8 +1,12 @@
 <template>
   <div class="chat-room">
-    <div class="detail-info" v-if="detail && detail.parseFinish">
-      <h5> {{ progress ? '解析中:'+ progress+'%' : '解析完成' }} 【{{ detail?.title }}】</h5>
-      <p :style="{width: progress ? progress+'%' : '100%'}"></p>
+    <div class="detail-info" v-if="detail !== null">
+      <h5>
+        {{ !detail.parseFinish && progress < 100 ? '解析中:' + progress + '%' : '解析完成' }} 【{{
+          detail?.title
+        }}】
+      </h5>
+      <p :style="{ width: !detail.parseFinish ? progress + '%' : '100%' }"></p>
     </div>
     <section class="chat-wrap" ref="chatWrapDom">
       <ul class="chat-messages">
@@ -48,21 +52,22 @@
 </template>
 
 <script>
-import { reactive, onMounted, onBeforeUnmount, ref, nextTick, computed, watch, watchEffect } from 'vue';
+import {
+  computed,
+  watch,
+  onBeforeMount
+} from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
-import { message as antMessage } from 'ant-design-vue';
 import { SendOutlined } from '@ant-design/icons-vue';
-import { chat, streamChat } from '@/service/chat';
-import { copyText } from '@/utils/tools.js';
+import useMessage from '@/hooks/useMessage';
 
 // 静态图片引入
-import defaultUserAvatar from '@/assets/default_user.jpg';
 import systemAvatar from '@/assets/logo.jpg';
 import loadingGIF from '@/assets/loading.gif';
 import { useStore } from 'vuex';
-import useSchedule from '../../hooks/useSchedule'
+import useSchedule from '../../hooks/useSchedule';
 
 export default {
   components: {
@@ -71,136 +76,44 @@ export default {
   },
   setup() {
     const route = useRoute();
-    const newMessage = ref('');
-    const chatWrapDom = ref();
     const loadingImg = loadingGIF;
-    let disabledInput = ref(false);
-    let messages = reactive([]);
     let store = useStore();
-    let {progress, stepText, error} = useSchedule()
+    let { progress } = useSchedule();
+    let { sendMessage, messages, disabledInput, newMessage, copyMessage, chatWrapDom } = useMessage();
 
-    const changeEffect = async (id) => {
-        let sessionCode = id || route.params.id;
-        store.commit('session/updateActive', sessionCode);
-        await store.dispatch('session/getDetail', sessionCode);
-        store.commit('session/addToList', {
-            sessionCode
-        });
-    }
+    console.log(progress.value,'1231244123123')
+   
+    const changeEffect = async (to) => {
+      let sessionCode = to ? to.params.id : route.params.id;
+      store.commit('session/updateDetail', null);
+      store.commit('session/updateActive', sessionCode);
+      await store.dispatch('session/getDetail', sessionCode);
+      store.commit('session/addToList', {
+        sessionCode
+      });
+    };
 
-    onMounted(changeEffect)
+    onBeforeMount(changeEffect);
+    onBeforeRouteUpdate(changeEffect);
 
-    onBeforeRouteUpdate(function (to, from) {
-      changeEffect(to.params.id)
-    });
-
-    /**
-     * 滚动到底部
-     */
-    const scrollBottom = () => {
-      nextTick(() => {
-        const domheight = chatWrapDom.value.scrollHeight;
-        chatWrapDom.value &&
-          chatWrapDom.value.scrollTo({
-            top: domheight,
-            behavior: 'smooth'
+    watch(() => progress.value, () => {
+        if (progress.value == 100) {
+          let { detail } = store.state.session;
+          messages.push({
+            id: Date.now(),
+            author: 'AI',
+            text: `你好，你现在可以问我关于「${detail.title}」的内容`,
+            isSent: false,
+            avatar: systemAvatar
           });
-      });
-    };
-
-    /**
-     * 复制信息
-     */
-    const copyMessage = (content) => {
-      copyText(content, () => {
-        antMessage.success('复制成功');
-      });
-    };
-
-    /**
-     * 发送信息
-     */
-    const sendMessage = () => {
-      if (!newMessage.value.trim() || disabledInput.value) {
-        return;
-      }
-      const sendMsg = newMessage.value.trim();
-      messages.push({
-        id: Date.now(),
-        author: 'User',
-        text: sendMsg,
-        isSent: true, // 标记消息是否由当前用户发送
-        avatar: defaultUserAvatar
-      });
-
-      nextTick(() => {
-        newMessage.value = '';
-      });
-      disabledInput.value = true;
-
-      let responseMsg = {
-        id: Date.now(),
-        author: 'AI',
-        isSent: false,
-        isLoading: true, // 加载中 TODO: 预留的加载口子
-        text: '',
-        avatar: systemAvatar
-      };
-
-      const newLength = messages.push(responseMsg);
-      scrollBottom();
-
-      const chatParam = {
-        context: false, // 上下文
-        message: sendMsg, // 信息
-        sessionId: 'test', // 会话id
-        userId: '101' // 用户id
-      };
-      chat(chatParam).then((res) => {
-        const { code, data, msg } = res;
-        if (code == 200) {
-          messages[newLength - 1]['text'] = data.context;
-          messages[newLength - 1]['isLoading'] = false;
-        } else {
-          messages[newLength - 1]['text'] = msg;
-          messages[newLength - 1]['isLoading'] = false;
         }
-        disabledInput.value = false;
-        scrollBottom();
-      });
-    };
+      }
+    );
 
-    onMounted(() => {
-      // connect to chat server and fetch initial messages
-      console.log('Mounted');
-    });
-
-    onBeforeUnmount(() => {
-      // disconnect from chat server
-      console.log('Unmounted');
-    });
-
-    if (!route.query.msg) {
-      messages = reactive([
-//         {
-//           id: Date.now(),
-//           author: 'AI',
-//           text: `你好！我是基于人工智能诞生的AI对话助手。\n
-// 我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
-//           // 以下是一些经典案例：\n`,
-//           isSent: false,
-//           avatar: systemAvatar
-//         }
-      ]);
-    } else {
-      newMessage.value = route.query.msg;
-      sendMessage();
-    }
 
     return {
       loadingImg,
       progress, //解析进度
-
       messages,
       newMessage,
       chatWrapDom,
@@ -216,7 +129,7 @@ export default {
 <style lang="less" scoped>
 .chat-wrap {
   padding: 24px;
-  height: calc(100vh - 188px);
+  height: calc(100vh - 208px);
   overflow-y: scroll;
   .chat-messages {
     list-style-type: none;
@@ -300,15 +213,17 @@ export default {
   line-height: 30px;
   padding: 0 24px;
   position: relative;
-  h5{
-    color: #fff;
+  h5 {
+    color: #333;
+    // text-shadow: 1px 1px 0px #fff;
     font-weight: 400;
     position: absolute;
     z-index: 1;
   }
-  p{
+  p {
     height: 100%;
-    width: 0;margin: 0;
+    width: 0;
+    margin: 0;
     left: 0;
     top: 0;
     z-index: 0;

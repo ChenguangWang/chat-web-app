@@ -12,12 +12,10 @@ export default () => {
   let store = useStore()
   let sse = ref(null);
 
-
   watch(() => store.state.session.detail, () => {
     let {detail} = store.state.session;
-    if(detail.parseFinish === false){
+    if(detail && detail.parseFinish === false){
         createSSE(route.params.id);
-        // console.log('detail', store.state.session.detail)
     }
   })
 
@@ -39,7 +37,6 @@ export default () => {
       if(_data.schedule === 100){
         sse.value.close()
       }
-      console.log('sse', _data);
     };
     sse.value.onerror = () => {
       // message.warning('连接失败');

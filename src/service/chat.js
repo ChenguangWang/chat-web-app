@@ -1,4 +1,6 @@
 import axios from '@/libs/api-request.js';
+import { fetchEventSource } from '@microsoft/fetch-event-source';
+import { getToken } from '@/utils/auth';
 
 /**
  * 聊天
@@ -18,13 +20,25 @@ export const chat = (data) => {
  * @param {*} data
  * @returns
  */
-export const streamChat = (data) => {
-  return axios.request({
-    // baseURL: 'https://api.chat-info.com.cn/api',
-    url: '/stream/chat',
-    method: 'post',
-    data,
-    responseType: 'stream'
-    // responseType: 'text/event-stream'
+export const streamChat = (
+  data,
+  { onopen = () => {}, onmessage = () => {}, onerror = () => {}, onclose =() => {} }
+) => {
+  let controller = new AbortController();
+  let signal = controller.signal;
+
+  fetchEventSource('/api/stream/chat', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: {
+      'Content-Type': 'application/json',
+      hi_smart_token_key: getToken()
+    },
+    signal,
+    onopen,
+    onerror,
+    onclose,
+    onmessage
   });
+  return controller;
 };

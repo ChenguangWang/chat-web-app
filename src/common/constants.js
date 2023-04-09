@@ -8,3 +8,13 @@ export const USER_INFO = 'userInfo';
  * @type {String}
  */
 export const USER_SPECICAL_INFO = 'userSpecialInfo';
+
+
+/**
+ * sessionType
+ */
+
+export const SESSIONTYPE = {
+    chat: 1,
+    file: 2,
+}

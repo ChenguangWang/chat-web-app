@@ -44,23 +44,18 @@
 </template>
 
 <script>
-import { reactive, onMounted, onBeforeUnmount, ref, nextTick } from 'vue';
+import { onMounted, onBeforeUnmount, ref, onBeforeMount, watch } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
 import { message as antMessage } from 'ant-design-vue';
 import { SendOutlined } from '@ant-design/icons-vue';
-import { chat, streamChat } from '@/service/chat';
 import { copyText } from '@/utils/tools.js';
-import { getToken } from '@/utils/auth';
+import useMessage from '@/hooks/useMessage';
 
 // 静态图片引入
-import defaultUserAvatar from '@/assets/default_user.jpg';
-import systemAvatar from '@/assets/logo.jpg';
 import loadingGIF from '@/assets/loading.gif';
 import { useStore } from 'vuex';
-
-import { fetchEventSource } from '@microsoft/fetch-event-source';
 
 export default {
   components: {
@@ -68,26 +63,10 @@ export default {
     MdEditor
   },
   setup() {
+    const store = useStore()
     const route = useRoute();
-    const newMessage = ref('');
-    const chatWrapDom = ref();
     const loadingImg = loadingGIF;
-    let disabledInput = ref(false);
-    let messages = reactive([]);
-
-    /**
-     * 滚动到底部
-     */
-    const scrollBottom = () => {
-      nextTick(() => {
-        const domheight = chatWrapDom.value.scrollHeight;
-        chatWrapDom.value &&
-          chatWrapDom.value.scrollTo({
-            top: domheight,
-            behavior: 'smooth'
-          });
-      });
-    };
+    let {sendMessage, messages, disabledInput, newMessage, chatWrapDom} = useMessage()
 
     /**
      * 复制信息
@@ -98,149 +77,40 @@ export default {
       });
     };
 
-    let controller = new AbortController();
-    let signal = controller.signal;
 
     /**
-     * 发送信息
+     * 获取会话详情
+     * @param {*} id 
      */
-    const sendMessage = () => {
-      if (!newMessage.value.trim() || disabledInput.value) {
-        return;
-      }
-      const sendMsg = newMessage.value.trim();
-      messages.push({
-        id: Date.now(),
-        author: 'User',
-        text: sendMsg,
-        isSent: true, // 标记消息是否由当前用户发送
-        avatar: defaultUserAvatar
-      });
-
-      nextTick(() => {
-        newMessage.value = '';
-      });
-      disabledInput.value = true;
-
-      let responseMsg = {
-        id: Date.now(),
-        author: 'AI',
-        isSent: false,
-        isLoading: true, // 加载中 TODO: 预留的加载口子
-        text: '',
-        avatar: systemAvatar
-      };
-
-      const newLength = messages.push(responseMsg);
-      scrollBottom();
-
-      const chatParam = {
-        message: sendMsg // 信息
-      };
-      // 非流
-      // chat(chatParam).then((res) => {
-      //   const { code, data, msg } = res;
-      //   if (code == 200) {
-      //     messages[newLength - 1]['text'] = data.context;
-      //     messages[newLength - 1]['isLoading'] = false;
-      //   } else {
-      //     messages[newLength - 1]['text'] = msg;
-      //     messages[newLength - 1]['isLoading'] = false;
-      //   }
-      //   disabledInput.value = false;
-      //   scrollBottom();
-      // });
-
-      let msgStreamData = ''; // 拼接流的数据
-      fetchEventSource('/api/stream/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          hi_smart_token_key: getToken()
-        },
-        signal,
-        body: JSON.stringify(chatParam),
-        onopen: async (response) => {
-          console.log('onopen====>>>', response);
-          msgStreamData = '';
-          messages[newLength - 1]['isLoading'] = false;
-          if (response.status != 200) {
-            switch (response.status) {
-              case 40000:
-                antMessage.warning('登录超时');
-                router.push({ name: 'login' });
-                break;
-              default:
-                msgStreamData = '服务异常';
-                break;
-            }
-          }
-        },
-        onmessage: (message) => {
-          console.log('message====>>>', message);
-          const streamObj = JSON.parse(message.data);
-          const { code, data } = streamObj;
-          if (code == 200) {
-            const { content } = data;
-            msgStreamData += (content && content.data) || '';
-            messages[newLength - 1]['text'] = msgStreamData + '_';
-            if (messages[newLength - 1]['isLoading']) {
-              messages[newLength - 1]['isLoading'] = false;
-            }
-            scrollBottom();
-          }
-        },
-        onclose: () => {
-          disabledInput.value = false;
-          messages[newLength - 1]['text'] = msgStreamData;
-          console.log('onclose====>>>');
-        },
-        onerror: (err) => {
-          controller.abort();
-          console.log('onerror=====>>>', err);
-        }
-      });
+    const changeEffect = async (id) => {
+      let sessionCode = id || route.params.id;
+      store.commit('session/updateActive', sessionCode);
+      store.dispatch('session/getDetail', sessionCode);
     };
 
-    let store = useStore();
-    const changeEffect = async (id) => {
-        let sessionCode = id || route.params.id;
-        store.commit('session/updateActive', sessionCode);
-        store.commit('session/addToList', {
-            sessionCode
-        });
-    }
-
-    onMounted(() => {
-      // connect to chat server and fetch initial messages
-      console.log('Mounted');
-    });
-
-    onBeforeUnmount(() => {
-      // disconnect from chat server
-      controller.abort();
-      console.log('Unmounted');
+    /**
+     * 会话详情触发
+     */
+    onBeforeMount(() => {
+      store.commit('session/updateDetail', null);
+      changeEffect()
     });
 
     onBeforeRouteUpdate(function (to, from) {
-      changeEffect(to.params.id)
+      store.commit('session/updateDetail', null);
+      messages.shift(0, messages.length)
+      changeEffect(to.params.id);
     });
 
-    if (!route.query.msg) {
-      messages = reactive([
-        {
-          id: Date.now(),
-          author: 'AI',
-          text: `你好！我是基于人工智能诞生的AI对话助手。\n
-我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
-          // 以下是一些经典案例：\n`,
-          isSent: false,
-          avatar: systemAvatar
-        }
-      ]);
-    } else {
-      newMessage.value = route.query.msg;
-      sendMessage();
+    
+    watch(() => store.state.session.list, () => {
+      let sessionCode = route.params.id;
+        store.commit('session/addToList', {
+            sessionCode
+        });
+    })
+    if (route.query.msg) {
+      messages.shift(0, messages.length)
     }
 
     return {
