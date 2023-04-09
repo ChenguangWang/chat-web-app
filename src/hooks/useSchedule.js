@@ -30,6 +30,7 @@ export default () => {
         createSSE(id)
     })
     return {
-        progress
+        progress,
+        stepText
     }
 }
