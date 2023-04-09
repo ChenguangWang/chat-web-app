@@ -125,7 +125,8 @@ export default () => {
     let msgStreamData = ''; // 拼接流的数据
     controller.value = streamChat(
       {
-        message: sendMsg
+        message: sendMsg,
+        sessionCode: store.state.session.active
       },
       {
         onopen: (response) => {
