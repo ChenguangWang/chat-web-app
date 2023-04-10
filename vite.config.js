@@ -24,7 +24,7 @@ export default defineConfig({
     }
   },
   server: {
-    // host: '172.48.106.63',
+    // host: '172.48.109.64',
     port: 5173,
     proxy: {
       '/sse': {
