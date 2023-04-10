@@ -141,6 +141,7 @@ export default {
       margin-bottom: 10px;
       clear: both;
       overflow: auto;
+      width: 100%;
       &.sent {
         float: right;
         .message-body {
