@@ -1,6 +1,9 @@
 <template>
   <div class="chat-room">
     <section class="chat-wrap" ref="chatWrapDom">
+      <div class="history-loading-wrap">
+        <a-spin v-if="historyParams.loading"/>
+      </div>
       <ul class="chat-messages">
         <li
           v-for="message in messages"
@@ -66,7 +69,7 @@ export default {
     const store = useStore()
     const route = useRoute();
     const loadingImg = loadingGIF;
-    let {sendMessage, messages, disabledInput, newMessage, chatWrapDom} = useMessage()
+    let {sendMessage, messages, disabledInput, newMessage, chatWrapDom, historyParams} = useMessage()
 
     /**
      * 复制信息
@@ -115,6 +118,7 @@ export default {
 
     return {
       loadingImg,
+      historyParams,
       messages,
       newMessage,
       chatWrapDom,
@@ -190,6 +194,9 @@ export default {
         font-size: 14px;
       }
     }
+  }
+  .history-loading-wrap {
+    text-align: center;
   }
 }
 .send-wrap {

@@ -15,6 +15,7 @@ export const chat = (data) => {
     data
   });
 };
+
 /**
  * 流聊天
  * @param {*} data
@@ -41,4 +42,17 @@ export const streamChat = (
     onmessage
   });
   return controller;
+};
+
+/**
+ * 聊天记录
+ * @param {*} data
+ * @returns
+ */
+ export const chatHistory = (data) => {
+  return axios.request({
+    url: '/session/history',
+    method: 'post',
+    data
+  });
 };

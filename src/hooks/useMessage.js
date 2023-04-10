@@ -4,7 +4,7 @@ import { useStore } from 'vuex';
 import { copyText } from '@/utils/tools.js';
 import systemAvatar from '@/assets/logo.jpg';
 import defaultUserAvatar from '@/assets/default_user.jpg';
-import { streamChat } from '@/service/chat';
+import { streamChat, chatHistory } from '@/service/chat';
 import { SESSIONTYPE } from '@/common/constants';
 
 export default () => {
@@ -15,6 +15,12 @@ export default () => {
   let disabledInput = ref(false);
   let messages = reactive([]);
   const store = useStore();
+  const historyParams = reactive({
+    pageNum: 1,
+    pageSize: 10,
+    total: 0,
+    loading: false
+  })
 
   watch(
     () => store.state.session.detail,
@@ -24,24 +30,24 @@ export default () => {
       if (detail) {
         let { history } = detail;
         if (detail.sessionType === SESSIONTYPE.chat) {
-          // 后期需要处理message list;
-        //   if (!history.total) {
-        //     if (router.query.msg) {
-              newMessage.value = router.query.msg || detail.title;
-              sendMessage();
-            // } else {
-            //   messages[0] = {
-            //     id: Date.now(),
-            //     author: 'AI',
-            //     text: `你好！我是基于人工智能诞生的AI对话助手。\n我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
-            //     isSent: false,
-            //     avatar: systemAvatar
-            //   };
-            // }
-        //   }
+          if (history.total == 0 && router.query.msg) {
+            newMessage.value = router.query.msg || detail.title;
+            sendMessage();
+          } else {
+            processHistory(history.data);
+          }
+          if(messages.length == 0) {
+            messages[0] = {
+              id: Date.now(),
+              author: 'AI',
+              text: `你好！我是基于人工智能诞生的AI对话助手。\n我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
+              isSent: false,
+              avatar: systemAvatar
+            };
+          }
         } else {
           // 后期需要处理message list;
-          if (!history.total && detail.parseFinish) {
+          if (history.total == 0 && detail.parseFinish) {
             messages[0] = {
               id: Date.now(),
               author: 'AI',
@@ -49,11 +55,20 @@ export default () => {
               isSent: false,
               avatar: systemAvatar
             };
+          } else {
+            processHistory(history.data);
           }
         }
+        historyParams.pageNum = history.pageNum + 1;
+        historyParams.pageSize = history.pageSize;
+        historyParams.total = history.total;
       }
     }
   );
+  
+  onMounted(()=>{
+    chatWrapDom.value?.addEventListener('scroll', scrollChange, true)
+  })
 
   onBeforeRouteUpdate(() => {
     controller.value?.abort();
@@ -61,23 +76,80 @@ export default () => {
   });
 
   onBeforeUnmount(() => {
+    chatWrapDom.value?.addEventListener('scroll', scrollChange, true)
+
     controller.value?.abort();
     disabledInput.value = false
   });
+
+  /**
+   * 下拉获取历史记录
+   */
+  const scrollChange = async () => {
+    const scrollTop = chatWrapDom.value.scrollTop;
+
+    if(scrollTop == 0 && !historyParams.loading) { 
+      if(historyParams.total > (historyParams.pageNum - 1) * historyParams.pageSize) {
+        historyParams.loading = true;
+        const param = {
+          pageNum: historyParams.pageNum,
+          pageSize: historyParams.pageSize,
+          sessionCode: store.state.session.active
+        }
+        const result = await chatHistory(param);
+        historyParams.loading = false;
+        if(result.code == 200) {
+          historyParams.pageNum++ ;
+          historyParams.total = result.data.total;
+          processHistory(result.data.data, true);
+        }
+      }
+    }
+  }
 
   /**
    * 滚动到底部
    */
   const scrollBottom = () => {
     nextTick(() => {
-      const domheight = chatWrapDom.value.scrollHeight;
+      const domheight = chatWrapDom.value?.scrollHeight;
       chatWrapDom.value &&
-        chatWrapDom.value.scrollTo({
+        chatWrapDom.value?.scrollTo({
           top: domheight,
           behavior: 'smooth'
         });
     });
   };
+
+  /**
+   * 处理历史消息
+   * @param {*} data 
+   * @param {*} isConcat 
+   */
+  const processHistory = (data,isConcat) => {
+    if(!isConcat) {
+      // 清空message
+      messages.splice(0, messages.length)
+    }
+    data = data.reverse();
+    const historyData = data.map(item => {
+      return {
+        id: item.chatTime,
+        author: item.roleType == 1 ? 'AI' : 'User',
+        text: item.chatContext,
+        isSent: item.roleType == 2,
+        avatar: item.roleType == 1 ? systemAvatar : defaultUserAvatar
+      }
+    })
+    if(historyData.length > 0) {
+      if(isConcat){
+        messages.unshift(...historyData);
+      }else {
+        messages.push(...historyData);
+        scrollBottom();
+      }
+    }
+  }
 
   /**
    * 复制信息
@@ -175,6 +247,7 @@ export default () => {
     disabledInput,
     chatWrapDom,
     newMessage,
+    historyParams,
     sendMessage
   };
 };
