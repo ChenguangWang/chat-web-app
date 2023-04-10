@@ -64,16 +64,10 @@ const setTitle = () => {
   }
 }
 
-onMounted(() => {
-  setTitle();
-});
-
 watch(
-  () => router.currentRoute.value,
-  (val) => {
-    if (val.meta) {
-      setTitle();
-    }
+  activeSession,
+  () => {
+    setTitle();
   },
   { immediate: true }
 );
