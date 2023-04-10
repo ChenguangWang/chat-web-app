@@ -28,7 +28,7 @@ export const streamChat = (
   let controller = new AbortController();
   let signal = controller.signal;
 
-  fetchEventSource('/sse/session/chat', {
+  fetchEventSource('/sse/chat', {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
