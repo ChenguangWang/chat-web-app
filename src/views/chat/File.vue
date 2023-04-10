@@ -9,6 +9,9 @@
       <p :style="{ width: !detail.parseFinish ? progress + '%' : '100%' }"></p>
     </div>
     <section class="chat-wrap" ref="chatWrapDom">
+      <div class="history-loading-wrap">
+        <a-spin v-if="historyParams.loading"/>
+      </div>
       <ul class="chat-messages">
         <li
           v-for="message in messages"
@@ -79,7 +82,7 @@ export default {
     const loadingImg = loadingGIF;
     let store = useStore();
     let { progress } = useSchedule();
-    let { sendMessage, messages, disabledInput, newMessage, copyMessage, chatWrapDom } = useMessage();
+    let { sendMessage, messages, disabledInput, newMessage, copyMessage, chatWrapDom, historyParams } = useMessage();
 
     console.log(progress.value,'1231244123123')
    
@@ -113,6 +116,7 @@ export default {
 
     return {
       loadingImg,
+      historyParams,
       progress, //解析进度
       messages,
       newMessage,
@@ -190,6 +194,9 @@ export default {
         font-size: 14px;
       }
     }
+  }
+  .history-loading-wrap {
+    text-align: center;
   }
 }
 .send-wrap {
