@@ -26,9 +26,9 @@
           </ul>
         </div>
       </div>
-      <h4 class="new-tips">
+      <!-- <h4 class="new-tips">
         文献阅读助手，点击上传或拖拽pdf文件试试 <span class="icon-new">NEW</span>
-      </h4>
+      </h4> -->
       <div class="input-wrap">
         <a-input
           v-model:value="inputValue"
@@ -37,7 +37,7 @@
           @pressEnter="createSession()"
         >
           <template #suffix>
-            <send-outlined />
+            <send-outlined @click="createSession()"/>
           </template>
         </a-input>
       </div>
