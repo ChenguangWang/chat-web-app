@@ -233,7 +233,7 @@ export default {
   .session-content {
     position: relative;
     height: calc(100% - 38px);
-    overflow: scroll;
+    overflow-y: scroll;
     .ant-spin {
       position: absolute;
       top: 50%;
