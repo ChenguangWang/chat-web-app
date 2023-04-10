@@ -36,7 +36,7 @@
               activeSession == item.sessionCode ? 'session-wrap-item active' : 'session-wrap-item'
             "
           >
-            <p @click="chooseSession(item)">
+            <p @click="chooseSession(item)" :title="item.showTitle">
               <i :class="item.sessionType === 2 ? 'iconfont icon-pdf' : 'iconfont icon-duihua'"></i>
               {{ item.showTitle }}
             </p>
@@ -224,6 +224,7 @@ export default {
   }
   .add-btn {
     font-weight: 400;
+    color: #17233d;
     cursor: pointer;
     &:hover {
       color: #2285f0;
@@ -246,6 +247,8 @@ export default {
     position: relative;
     height: 36px;
     padding: 0 25px 0 15px;
+    color: #17233d;
+    opacity: .8;
     p {
       vertical-align: middle;
       font-size: 12px;
@@ -292,6 +295,12 @@ export default {
     &:hover {
       color: #2285f0;
     }
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .icon-quxiao {
+    display: block !important;
   }
 }
 </style>

@@ -2,9 +2,7 @@
   <div class="chat-room">
     <div class="detail-info" v-if="detail !== null">
       <h5>
-        {{ !detail.parseFinish && progress < 100 ? '解析中:' + progress + '%' : '解析完成' }} 【{{
-          detail?.title
-        }}】
+        {{ !detail.parseFinish && progress < 100 ? '解析中:' + progress + '%' : '解析完成' }} 【<span class="detail-info-title" :title="detail?.title">{{ detail?.title }}</span>】
       </h5>
       <p :style="{ width: !detail.parseFinish ? progress + '%' : '100%' }"></p>
     </div>
@@ -252,6 +250,14 @@ export default {
 @media only screen and (max-width: 768px) {
   header {
     display: none;
+  }
+  .detail-info-title {
+    display: inline-block;
+    vertical-align: bottom;
+    width: 248px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 </style>
