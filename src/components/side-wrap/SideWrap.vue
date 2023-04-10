@@ -267,10 +267,10 @@ export default {
       color: #aaa;
     }
     &.active {
-      background-color: #ddd;
+      color: #2285f0;
     }
     &:hover {
-      color: #2285f0;
+      background-color: #ddd;
       .icon-quxiao {
         display: block;
       }
