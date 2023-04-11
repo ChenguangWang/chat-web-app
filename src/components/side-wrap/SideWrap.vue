@@ -49,6 +49,9 @@
       <div class="option-wrap-item" @click="clearAll">
         <clear-outlined /><span class="btn-text">清除会话</span>
       </div>
+      <div class="option-wrap-item" @click="callMe">
+        <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i><span class="btn-text">联系我们</span>
+      </div>
       <!--  <div class="option-wrap-item" @click="routerChange('upgrade')">
         <account-book-outlined /><span class="btn-text">升级功能</span>
       </div> -->
@@ -56,11 +59,16 @@
         <logout-outlined /><span class="btn-text">退出登录</span>
       </div>
     </div>
+    <a-modal v-model:visible="callMeModal" :width="400" title="联系我们" :footer="null">
+      <div style="text-align: center">
+      <img src="/src/assets/call-me-qrcode.jpg" style="width: 100%" alt="">
+      </div>
+    </a-modal>
   </div>
 </template>
 
 <script>
-import { computed, onBeforeMount } from 'vue';
+import { computed, onBeforeMount, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { getToken, removeToken } from '@/utils/auth';
 import {
@@ -85,6 +93,8 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
+    const callMeModal = ref(false)
+
     const routerChange = (name) => {
       router.push({ name });
     };
@@ -149,6 +159,10 @@ export default {
       });
     };
 
+    const callMe = () => {
+      callMeModal.value = true;
+    }
+
     // 默认头像
     const defaultUserAvatar = hasToken.value ? defaultUser : '';
 
@@ -164,6 +178,8 @@ export default {
       activeSession: computed(() => store.state.session.active),
       loading: computed(() => store.state.session.loading),
       defaultUserAvatar,
+      callMe,
+      callMeModal,
       logout,
       clearAll,
       routerChange,
