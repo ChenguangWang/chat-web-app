@@ -1,6 +1,7 @@
 import { onMounted, ref, watch, reactive, nextTick, onBeforeUnmount } from 'vue';
-import { useRoute, onBeforeRouteUpdate } from 'vue-router';
+import { useRoute, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
+import { message as antMessage } from 'ant-design-vue';
 import { copyText } from '@/utils/tools.js';
 import systemAvatar from '@/assets/logo.jpg';
 import defaultUserAvatar from '@/assets/default_user.jpg';
@@ -8,7 +9,8 @@ import { streamChat, chatHistory } from '@/service/chat';
 import { SESSIONTYPE } from '@/common/constants';
 
 export default () => {
-  const router = useRoute();
+  const route = useRoute();
+  const router = useRouter();
   const newMessage = ref('');
   const chatWrapDom = ref();
   const controller = ref(null);
@@ -30,8 +32,8 @@ export default () => {
       if (detail) {
         let { history } = detail;
         if (detail.sessionType === SESSIONTYPE.chat) {
-          if (history.total == 0 && router.query.msg) {
-            newMessage.value = router.query.msg || detail.title;
+          if (history.total == 0 && route.query.msg) {
+            newMessage.value = route.query.msg || detail.title;
             sendMessage();
           } else {
             processHistory(history.data);
@@ -204,29 +206,10 @@ export default () => {
         onopen: (response) => {
           msgStreamData = '';
           messages[newLength - 1]['isLoading'] = false;
-          if (response.status != 200) {
-            switch (response.status) {
-              case 40000:
-                antMessage.warning('登录超时');
-                router.push({ name: 'login' });
-                break;
-              default:
-                msgStreamData = '服务异常';
-                break;
-            }
-          }
-        },
-        onclose: () => {
-          disabledInput.value = false;
-          messages[newLength - 1]['text'] = msgStreamData;
-        },
-        onerror: (err) => {
-          disabledInput.value = false
-          controller.value.abort();
         },
         onmessage: (message) => {
           const streamObj = JSON.parse(message.data);
-          const { code, data } = streamObj;
+          const { code, data, msg } = streamObj;
           if (code == 200) {
             const { content } = data;
             msgStreamData += (content && content.data) || '';
@@ -235,8 +218,28 @@ export default () => {
               messages[newLength - 1]['isLoading'] = false;
             }
             scrollBottom();
+          } else {
+            switch (code) {
+              case 40000:
+                antMessage.warning('登录超时');
+                router.push({name: 'login'});
+                break;
+              default:
+                break;
+            }
+            msgStreamData = msg;
+            controller.value.abort();
           }
-        }
+        },
+        onclose: () => {
+          disabledInput.value = false;
+          messages[newLength - 1]['text'] = msgStreamData;
+        },
+        onerror: (err) => {
+          console.log('message onerror====>>',err);
+          disabledInput.value = false
+          controller.value.abort();
+        },
       }
     );
   };

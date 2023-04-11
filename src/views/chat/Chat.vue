@@ -177,6 +177,7 @@ export default {
         padding: 10px;
         border-radius: 8px;
         background-color: #f2f2f2;
+        min-height: 46px;
         &-loading {
           height: 25px;
         }
