@@ -42,7 +42,7 @@
         placeholder="输入消息，Ctrl + Enter 发送"
         @keyup.ctrl.enter="sendMessage"
       />
-      <a-button class="send-btn" type="primary" shape="round" @click="sendMessage">
+      <a-button :disabled="disabledInput" class="send-btn" type="primary" shape="round" @click="sendMessage">
         <template #icon>
           <send-outlined />
         </template>
@@ -82,8 +82,6 @@ export default {
     let { progress } = useSchedule();
     let { sendMessage, messages, disabledInput, newMessage, copyMessage, chatWrapDom, historyParams } = useMessage();
 
-    console.log(progress.value,'1231244123123')
-   
     const changeEffect = async (to) => {
       let sessionCode = to ? to.params.id : route.params.id;
       store.commit('session/updateDetail', null);
@@ -99,14 +97,10 @@ export default {
 
     watch(() => progress.value, () => {
         if (progress.value == 100) {
-          let { detail } = store.state.session;
-          messages.push({
-            id: Date.now(),
-            author: 'AI',
-            text: `你好，你现在可以问我关于「${detail.title}」的内容`,
-            isSent: false,
-            avatar: systemAvatar
-          });
+          store.dispatch('session/getDetail', route.params.id);
+          disabledInput.value = false
+        }else{
+          disabledInput.value = true
         }
       }
     );
@@ -131,7 +125,9 @@ export default {
 <style lang="less" scoped>
 .chat-wrap {
   padding: 24px;
+  padding-top: 54px;
   height: calc(100vh - 208px);
+  box-sizing: border-box;
   overflow-y: scroll;
   .chat-messages {
     list-style-type: none;
@@ -215,7 +211,7 @@ export default {
 }
 
 .detail-info {
-  height: 30px;
+  height: 1px;
   line-height: 30px;
   padding: 0 24px;
   position: relative;
@@ -227,7 +223,7 @@ export default {
     z-index: 1;
   }
   p {
-    height: 100%;
+    height: 30px;
     width: 0;
     margin: 0;
     left: 0;

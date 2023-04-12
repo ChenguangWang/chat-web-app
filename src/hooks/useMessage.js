@@ -51,7 +51,7 @@ export default () => {
             messages[0] = {
               id: Date.now(),
               author: 'AI',
-              text: `你好，你现在可以问我关于「${detail.title}」的内容`,
+              text: detail.mainIdea,
               isSent: false,
               avatar: systemAvatar
             };

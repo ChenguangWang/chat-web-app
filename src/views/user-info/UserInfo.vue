@@ -1,6 +1,7 @@
 <template>
-  <a-collapse v-model:activeKey="activeKey" ghost>
-    <a-collapse-panel key="1" header="修改密码">
+  
+  <!-- <a-collapse v-model:activeKey="activeKey" ghost> -->
+    <!-- <a-collapse-panel key="1" header="修改密码"> -->
       <a-form
         ref="passwordFormRef"
         :model="passwordFormState"
@@ -10,6 +11,11 @@
         :rules="passwordRules"
         @finish="handlePasswordFinish"
       >
+      <a-form-item class="user-mobile"  label="手机号" name="phoneNumber">
+        <div style="display: flex">
+          {{ userInfo.phoneNumber }} 
+        </div>
+      </a-form-item>
         <a-form-item
           label="验证码"
           name="verificationCode"
@@ -34,7 +40,7 @@
         </a-form-item>
         <a-button type="primary" html-type="submit">确认</a-button>
       </a-form>
-    </a-collapse-panel>
+    <!-- </a-collapse-panel> -->
     <!-- <a-collapse-panel key="2" header="修改帐号">
       <a-form
         ref="passwordFormRef"
@@ -51,7 +57,7 @@
         <a-button type="primary" html-type="submit">确认</a-button>
       </a-form>
     </a-collapse-panel> -->
-  </a-collapse>
+  <!-- </a-collapse> -->
 </template>
 
 <script setup>
@@ -63,7 +69,9 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const activeKey = ref(['1']);
-let userInfo = reactive({});
+let userInfo = reactive({
+  phoneNumber: '--'
+});
 // 密码表单
 const passwordFormRef = ref();
 
@@ -139,13 +147,18 @@ const handlePasswordFinish = async (values) => {
 onMounted(async () => {
   const userRes = await getUserInfo();
   if (userRes.code == 200) {
-    userInfo = userRes.data;
+    userInfo.phoneNumber = userRes.data.phoneNumber
+    console.log('userInfo====', userRes.data);
   }
-  console.log('userInfo====', userInfo);
 });
+
 </script>
 
 <style lang="less" scoped>
+.user-mobile{
+  padding-top: 20px;
+  margin-left: 12px;
+}
 .form-wrap {
   max-width: 300px;
   margin-left: 24px;
