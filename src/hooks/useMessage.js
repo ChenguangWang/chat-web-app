@@ -225,10 +225,9 @@ export default () => {
                 router.push({name: 'login'});
                 break;
               default:
+                msgStreamData = msg;
                 break;
             }
-            msgStreamData = msg;
-            controller.value.abort();
           }
         },
         onclose: () => {
