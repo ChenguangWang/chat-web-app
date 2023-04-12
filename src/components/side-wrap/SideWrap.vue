@@ -50,7 +50,9 @@
         <clear-outlined /><span class="btn-text">清除会话</span>
       </div>
       <div class="option-wrap-item" @click="routerChange('userInfo')">
-        <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i><span class="btn-text">系统设置</span>
+        <!-- <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i> -->
+        <setting-outlined />
+        <span class="btn-text">系统设置</span>
       </div>
       <div class="option-wrap-item" @click="callMe">
         <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i><span class="btn-text">联系我们</span>
@@ -79,6 +81,7 @@ import {
   PlusOutlined,
   ClearOutlined,
   AccountBookOutlined,
+  SettingOutlined,
   LogoutOutlined
 } from '@ant-design/icons-vue';
 import defaultUser from '@/assets/default_user.jpg';
@@ -91,6 +94,7 @@ export default {
     PlusOutlined,
     ClearOutlined,
     AccountBookOutlined,
+    SettingOutlined,
     LogoutOutlined
   },
   setup() {
