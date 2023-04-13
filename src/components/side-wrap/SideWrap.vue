@@ -50,7 +50,8 @@
         <clear-outlined /><span class="btn-text">清除会话</span>
       </div>
       <div class="option-wrap-item" @click="callMe">
-        <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i><span class="btn-text">联系我们</span>
+        <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i>
+        <span class="btn-text">联系我们</span>
       </div>
       <!--  <div class="option-wrap-item" @click="routerChange('upgrade')">
         <account-book-outlined /><span class="btn-text">升级功能</span>
@@ -61,7 +62,7 @@
     </div>
     <a-modal v-model:visible="callMeModal" :width="400" title="联系我们" :footer="null">
       <div style="text-align: center">
-      <img src="/src/assets/call-me-qrcode.jpg" style="width: 100%" alt="">
+        <img src="/src/assets/call-me-qrcode.jpg" style="width: 100%" alt="" />
       </div>
     </a-modal>
   </div>
@@ -93,7 +94,7 @@ export default {
   setup() {
     const store = useStore();
     const router = useRouter();
-    const callMeModal = ref(false)
+    const callMeModal = ref(false);
 
     const routerChange = (name) => {
       router.push({ name });
@@ -161,7 +162,7 @@ export default {
 
     const callMe = () => {
       callMeModal.value = true;
-    }
+    };
 
     // 默认头像
     const defaultUserAvatar = hasToken.value ? defaultUser : '';
@@ -206,18 +207,17 @@ export default {
   &-desc {
     margin-left: 8px;
     span {
-      font-size: 12px;
+      font-size: 14px;
       color: #17233d;
       opacity: 0.8;
     }
   }
 }
 .user-wrap {
-  padding: 24px;
+  padding: 8px 0;
   text-align: center;
-  border-bottom: 1px solid rgba(23, 35, 61, 0.1);
   .login-btn {
-    font-size: 12px;
+    font-size: 14px;
   }
 }
 
@@ -226,29 +226,26 @@ export default {
   padding: 0;
   overflow: hidden;
   text-align: center;
-  font-size: 12px;
+  font-size: 14px;
   border-bottom: 1px solid rgba(23, 35, 61, 0.1);
 
-  &-title,
   .add-btn {
-    display: block;
+    margin: 0 6px;
+    padding: 6px 8px;
     text-align: left;
-    height: 38px;
-    line-height: 38px;
-    margin-left: 10px;
-    font-weight: 500;
-  }
-  .add-btn {
     font-weight: 400;
-    color: #17233d;
+    color: rgb(122, 122, 122);
     cursor: pointer;
+    border-radius: 2px;
+    border: 1px solid rgb(151, 151, 151);
     &:hover {
-      color: #2285f0;
+      color: @primary-color;
+      border-color: @primary-color;
     }
   }
   .session-content {
     position: relative;
-    height: calc(100% - 38px);
+    height: calc(100% - 32px);
     overflow-y: scroll;
     .ant-spin {
       position: absolute;
@@ -264,10 +261,10 @@ export default {
     height: 36px;
     padding: 0 25px 0 15px;
     color: #17233d;
-    opacity: .8;
+    opacity: 0.8;
     p {
       vertical-align: middle;
-      font-size: 12px;
+      font-size: 14px;
       overflow: hidden;
       text-overflow: ellipsis;
       height: 34px;
@@ -286,7 +283,8 @@ export default {
       color: #aaa;
     }
     &.active {
-      color: #2285f0;
+      background: #fff;
+      color: @primary-color;
     }
     &:hover {
       background-color: #ddd;
@@ -297,7 +295,7 @@ export default {
   }
 }
 .option-wrap {
-  font-size: 12px;
+  font-size: 14px;
   color: #17233d;
   opacity: 0.8;
   &-item {
@@ -309,7 +307,7 @@ export default {
       margin-left: 8px;
     }
     &:hover {
-      color: #2285f0;
+      color: @primary-color;
     }
   }
 }

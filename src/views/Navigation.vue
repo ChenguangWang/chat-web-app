@@ -1,6 +1,6 @@
 <template>
   <a-layout>
-    <a-layout-sider>
+    <a-layout-sider width="252">
       <SideWrap></SideWrap>
     </a-layout-sider>
     <a-layout>

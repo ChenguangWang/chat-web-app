@@ -6,7 +6,11 @@
       </svg>
       <div class="upload-tips">
         <h3>{{ state.uploadTip }}</h3>
-        <a-progress :percent="state.uploadProgress" :steps="10" stroke-color="rgba(219, 28, 12, 0.64)" />
+        <a-progress
+          :percent="state.uploadProgress"
+          :steps="10"
+          stroke-color="rgba(219, 28, 12, 0.64)"
+        />
       </div>
     </div>
     <section class="chat-container" :style="{ opacity: state.uploading ? 0.1 : 1 }">
@@ -30,16 +34,24 @@
         文献阅读助手，点击上传或拖拽pdf文件试试 <span class="icon-new">NEW</span>
       </h4> -->
       <div class="input-wrap">
-        <a-input
+        <!-- <a-input
           v-model:value="inputValue"
           placeholder="和AI聊点什么"
           size="large"
           @pressEnter="createSession()"
         >
           <template #suffix>
-            <send-outlined @click="createSession()"/>
+            <send-outlined @click="createSession()" />
           </template>
-        </a-input>
+        </a-input> -->
+        <a-input-search
+          size="large"
+          v-model:value="inputValue"
+          placeholder="和AI聊点什么"
+          :loading="inputLoading"
+          enter-button="提问"
+          @search="createSession"
+        />
       </div>
     </section>
   </div>
@@ -62,10 +74,11 @@ export default {
   setup() {
     const exampleData = Const.exampleData();
     const inputValue = ref();
+    const inputLoading = ref(false);
     const router = useRouter();
     const dragEffect = ref(null);
     const dragContainer = ref(null);
-    const store =  useStore();
+    const store = useStore();
     const state = reactive({
       uploading: false,
       uploadProgress: 0,
@@ -106,22 +119,21 @@ export default {
         let formData = new FormData();
         formData.append('file', file);
         try {
-          const {code, data} = await uploadFile(formData, (res) => {
-            state.uploadProgress = parseInt(res.progress * 100)
-            state.uploadTip = '正在上传...'
+          const { code, data } = await uploadFile(formData, (res) => {
+            state.uploadProgress = parseInt(res.progress * 100);
+            state.uploadTip = '正在上传...';
           });
-          if(code == 200){
-            console.log('upload data', data)
-            setTimeout(()=>{
+          if (code == 200) {
+            console.log('upload data', data);
+            setTimeout(() => {
               router.push({
                 name: 'file',
                 params: {
                   id: data.session
                 }
-              })
-            }, 500)
+              });
+            }, 500);
           }
-          
         } catch (err) {
           console.log(err);
         }
@@ -140,10 +152,12 @@ export default {
 
     const createSession = (data) => {
       const startMsg = data || inputValue.value;
+      inputLoading.value = true;
       addSession({
         message: startMsg,
         sessionType: 1 // 普通对话
       }).then((res) => {
+        inputLoading.value = false;
         if (res.code == 200) {
           store.dispatch('session/getList');
           router.push({
@@ -160,6 +174,7 @@ export default {
     };
     return {
       inputValue,
+      inputLoading,
       exampleData,
       dragContainer,
       dragEffect,
@@ -229,10 +244,6 @@ export default {
     transform: translate(-50%);
     width: 65%;
     margin: 34px auto;
-    .ant-input-affix-wrapper {
-      border-radius: 6px;
-      box-shadow: 0px 4px 8px 0px rgba(0, 0, 0, 0.02), 0px 1px 3px 0px rgba(0, 0, 0, 0.02);
-    }
   }
   .new-tips {
     display: inline-block;
@@ -259,7 +270,7 @@ export default {
   top: 10px;
   right: 10px;
   bottom: 10px;
-  .upload-tips{
+  .upload-tips {
     position: absolute;
     top: 50%;
     left: 50%;
