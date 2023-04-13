@@ -229,7 +229,7 @@ export default {
 }
 
 .session-wrap {
-  height: calc(100vh - 350px);
+  height: calc(100vh - 286px);
   padding: 0;
   overflow: hidden;
   text-align: center;
@@ -237,7 +237,7 @@ export default {
   border-bottom: 1px solid rgba(23, 35, 61, 0.1);
 
   .add-btn {
-    margin: 0 6px;
+    margin: 0 6px 8px;
     padding: 6px 8px;
     text-align: left;
     font-weight: 400;
@@ -252,7 +252,7 @@ export default {
   }
   .session-content {
     position: relative;
-    height: calc(100% - 32px);
+    height: calc(100% - 44px);
     overflow-y: scroll;
     .ant-spin {
       position: absolute;
