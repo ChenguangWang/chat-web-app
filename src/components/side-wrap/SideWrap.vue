@@ -259,9 +259,10 @@ export default {
     text-align: left;
     position: relative;
     height: 36px;
+    margin: 0 6px;
+    border-radius: 2px;
     padding: 0 25px 0 15px;
-    color: #17233d;
-    opacity: 0.8;
+    color: rgb(122, 122, 122);
     p {
       vertical-align: middle;
       font-size: 14px;
@@ -296,8 +297,7 @@ export default {
 }
 .option-wrap {
   font-size: 14px;
-  color: #17233d;
-  opacity: 0.8;
+  color: rgb(122, 122, 122);
   &-item {
     padding: 0 12px;
     height: 38px;
