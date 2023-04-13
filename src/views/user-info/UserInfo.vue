@@ -1,166 +1,144 @@
 <template>
-  
-  <!-- <a-collapse v-model:activeKey="activeKey" ghost> -->
-    <!-- <a-collapse-panel key="1" header="修改密码"> -->
-      <a-form
-        ref="passwordFormRef"
-        :model="passwordFormState"
-        class="form-wrap"
-        name="basic"
-        autocomplete="off"
-        :rules="passwordRules"
-        @finish="handlePasswordFinish"
-      >
-      <a-form-item class="user-mobile"  label="手机号" name="phoneNumber">
-        <div style="display: flex">
-          {{ userInfo.phoneNumber }} 
-        </div>
-      </a-form-item>
-        <a-form-item
-          label="验证码"
-          name="verificationCode"
-          :rules="[{ required: true, message: '请输入验证码' }]"
-        >
-          <div style="display: flex">
-            <a-input
-              v-model:value="passwordFormState.verificationCode"
-              placeholder="输入验证码"
-            ></a-input>
-            <a-button type="text" @click="fetchCode" :loading="codeBtnLoading">{{
-              codeBtnLoading ? `${times}秒后重试` : '获取验证码'
-            }}</a-button>
-          </div>
-        </a-form-item>
+  <div class="user-info-wrap">
+    <section>
+      <header>
+        <div class="title-icon"></div>
+        <h4>帐号信息</h4>
+      </header>
+      <a-row class="content-item">
+        <a-col class="label" :span="6">帐号名</a-col>
+        <a-col :span="14">{{ userInfo.userAccount || userInfo.phoneNumber }}</a-col>
+        <a-col :span="4" class="operate-wrap">
+          <span class="operate-btn" @click="openModal('account')">编辑</span>
+        </a-col>
+      </a-row>
+      <a-row class="content-item">
+        <a-col class="label" :span="6">手机号</a-col>
+        <a-col :span="18">{{ userInfo.phoneNumber }}</a-col>
+      </a-row>
+      <a-row class="content-item">
+        <a-col class="label" :span="6">密码</a-col>
+        <a-col :span="14">已设置</a-col>
+        <a-col :span="4" class="operate-wrap">
+          <span class="operate-btn" @click="openModal('password')">编辑</span>
+        </a-col>
+      </a-row>
+    </section>
+    <section>
+      <header>
+        <div class="title-icon"></div>
+        <h4>使用偏好</h4>
+      </header>
+      <a-row class="content-item context" :wrap="true">
+        <a-col class="label" :span="6">对话上下文</a-col>
+        <a-col :span="14">启用对话上下文，可以连续提问并修正回答，但将消耗更多token</a-col>
+        <a-col :span="4">
+          <a-switch v-model:checked="openContext" />
+        </a-col>
+      </a-row>
+    </section>
 
-        <a-form-item has-feedback label="新密码" name="pass">
-          <a-input v-model:value="passwordFormState.pass" type="password" autocomplete="off" />
-        </a-form-item>
-        <a-form-item has-feedback label="确认密码" name="checkPass">
-          <a-input v-model:value="passwordFormState.checkPass" type="password" autocomplete="off" />
-        </a-form-item>
-        <a-button type="primary" html-type="submit">确认</a-button>
-      </a-form>
-    <!-- </a-collapse-panel> -->
-    <!-- <a-collapse-panel key="2" header="修改帐号">
-      <a-form
-        ref="passwordFormRef"
-        :model="passwordFormState"
-        class="form-wrap"
-        name="basic"
-        autocomplete="off"
-        :rules="passwordRules"
-        @finish="handlePasswordFinish"
-      >
-        <a-form-item has-feedback label="设置登录帐号" name="pass">
-          <a-input v-model:value="passwordFormState.pass" type="password" autocomplete="off" />
-        </a-form-item>
-        <a-button type="primary" html-type="submit">确认</a-button>
-      </a-form>
-    </a-collapse-panel> -->
-  <!-- </a-collapse> -->
+    <a-modal v-model:visible="showModal" :width="400" :title="modalTitle" :footer="null">
+      <PasswordForm
+        v-if="modalType == 'password'"
+        :phoneNumber="userInfo.phoneNumber"
+      ></PasswordForm>
+      <AccountForm v-if="modalType == 'account'"></AccountForm>
+    </a-modal>
+  </div>
 </template>
 
 <script setup>
 import { defineComponent, onMounted, reactive, ref, watch } from 'vue';
 import { message as antMessage } from 'ant-design-vue';
 import { getVerificationCodeForPass, modifyPassword, getUserInfo } from '@/service/user.js';
-import { removeToken } from '@/utils/auth';
 import { useRouter } from 'vue-router';
+import PasswordForm from './components/PasswordForm.vue';
+import AccountForm from './components/AccountForm.vue';
 
 const router = useRouter();
-const activeKey = ref(['1']);
+const openContext = ref(false);
+
+const showModal = ref(false);
+const modalTitle = ref('修改');
+const modalType = ref('account');
+
 let userInfo = reactive({
-  phoneNumber: '--'
-});
-// 密码表单
-const passwordFormRef = ref();
-
-const passwordFormState = reactive({
-  verificationCode: '',
-  pass: '',
-  checkPass: ''
+  phoneNumber: '--',
+  userAccount: ''
 });
 
-// 按钮loading
-const codeBtnLoading = ref(false);
-const times = ref(60);
-
-let timer = null;
-const fetchCode = () => {
-  getVerificationCodeForPass().then((res) => {
-    if (res.code == 200) {
-      antMessage.success(res.data);
-    }
-    codeBtnLoading.value = true;
-    timer = setInterval(() => {
-      if (times.value == 0) {
-        codeBtnLoading.value = false;
-        times.value = 60;
-        clearInterval(timer);
-        return;
-      }
-      --times.value;
-    }, 1000);
-  });
-};
-
-let validatePass = async (_rule, value) => {
-  if (value === '') {
-    return Promise.reject('请输入新密码');
-  } else {
-    if (passwordFormState.checkPass !== '') {
-      passwordFormRef.value.validateFields('checkPass');
-    }
-    return Promise.resolve();
-  }
-};
-let validatePass2 = async (_rule, value) => {
-  if (value === '') {
-    return Promise.reject('请重新输入密码');
-  } else if (value !== passwordFormState.pass) {
-    return Promise.reject('两次密码不一致');
-  } else {
-    return Promise.resolve();
-  }
-};
-
-// 校验规则
-const passwordRules = {
-  pass: [{ required: true, validator: validatePass, trigger: 'change' }],
-  checkPass: [{ validator: validatePass2, trigger: 'change' }]
-};
-
-const handlePasswordFinish = async (values) => {
-  const params = {
-    code: values.verificationCode,
-    modifyPassword: values.pass
-  };
-  modifyPassword(params).then((res) => {
-    if (res.code == 200) {
-      antMessage.success('修改成功');
-      removeToken();
-      router.push({ name: 'login' });
-    }
-  });
+const openModal = (type) => {
+  showModal.value = true;
+  modalTitle.value = type == 'account' ? '修改帐号' : '修改密码';
+  modalType.value = type;
 };
 
 onMounted(async () => {
   const userRes = await getUserInfo();
   if (userRes.code == 200) {
-    userInfo.phoneNumber = userRes.data.phoneNumber
-    console.log('userInfo====', userRes.data);
+    userInfo.phoneNumber = userRes.data.phoneNumber;
+    userInfo.userAccount = userRes.data.userAccount;
   }
 });
-
 </script>
 
 <style lang="less" scoped>
-.user-mobile{
-  padding-top: 20px;
-  margin-left: 12px;
+.user-info-wrap {
+  width: 80%;
+  padding: 30px 56px;
+  margin: 24px auto;
+  background: #fff;
+  font-size: 12px;
+  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.1);
 }
-.form-wrap {
-  max-width: 300px;
-  margin-left: 24px;
+
+header {
+  display: flex;
+  align-items: center;
+  margin: 16px 0;
+  h4 {
+    font-size: 14px;
+    margin-left: 8px;
+  }
+}
+
+.content-item {
+  height: 46px;
+  line-height: 46px;
+  font-size: 14px;
+  border-bottom: 1px solid rgb(220, 220, 220);
+  .label {
+    font-weight: 500;
+  }
+  .ant-col {
+    padding-left: 14px;
+  }
+  .operate-wrap {
+    color: @primary-color;
+    text-align: center;
+  }
+  .operate-btn {
+    cursor: pointer;
+  }
+  &.context {
+    height: auto;
+    line-height: normal;
+  }
+  &:last-child {
+    border: none;
+  }
+}
+
+.title-icon {
+  width: 3px;
+  height: 16px;
+  background: @primary-color;
+}
+
+@media only screen and (max-width: 768px) {
+  .user-info-wrap {
+    padding: 16px 24px;
+  }
 }
 </style>
