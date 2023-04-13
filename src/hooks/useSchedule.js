@@ -12,12 +12,12 @@ export default () => {
   let error = ref('');
   let state = ref(0); //状态
   let store = useStore()
-  let sse = ref(null);
+  let sseCtrl = ref(null);
 
   watch(() => store.state.session.detail, () => {
     let {detail} = store.state.session;
     if(detail && detail.parseFinish === false){
-        createSSE(route.params.id);
+      sseCtrl.value = createSSE(route.params.id);
     }
   })
 
@@ -42,7 +42,6 @@ export default () => {
         stepText.value = _data.detail;
         // 处理完成之后断开
         if(_data.schedule === 100){
-          // sse.value.close()
           controller.abort();
         }
       },
@@ -60,14 +59,15 @@ export default () => {
         }
     }, 60*1000)
 
+    return controller;
   };
  
   onBeforeRouteUpdate((to, from) => {
-    sse.value?.close();
+    sseCtrl.value?.abort();
   });
 
   onBeforeUnmount(() => {
-    sse.value?.close();
+    sseCtrl.value?.abort();
   });
 
   return {

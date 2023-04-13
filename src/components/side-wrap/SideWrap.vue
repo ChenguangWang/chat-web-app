@@ -16,9 +16,9 @@
         <a-button class="login-btn" v-show="!hasToken" type="text" @click="routerChange('login')">
           点击登录
         </a-button>
-        <a-button class="login-btn" v-show="hasToken" type="text" @click="routerChange('userInfo')">
+        <!-- <a-button class="login-btn" v-show="hasToken" type="text" @click="routerChange('userInfo')">
           个人信息
-        </a-button>
+        </a-button> -->
       </div>
     </div>
     <div class="session-wrap">
@@ -49,6 +49,11 @@
       <div class="option-wrap-item" @click="clearAll">
         <clear-outlined /><span class="btn-text">清除会话</span>
       </div>
+      <div class="option-wrap-item" @click="routerChange('userInfo')">
+        <!-- <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i> -->
+        <setting-outlined />
+        <span class="btn-text">系统设置</span>
+      </div>
       <div class="option-wrap-item" @click="callMe">
         <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i>
         <span class="btn-text">联系我们</span>
@@ -77,6 +82,7 @@ import {
   PlusOutlined,
   ClearOutlined,
   AccountBookOutlined,
+  SettingOutlined,
   LogoutOutlined
 } from '@ant-design/icons-vue';
 import defaultUser from '@/assets/default_user.jpg';
@@ -89,6 +95,7 @@ export default {
     PlusOutlined,
     ClearOutlined,
     AccountBookOutlined,
+    SettingOutlined,
     LogoutOutlined
   },
   setup() {
@@ -222,7 +229,7 @@ export default {
 }
 
 .session-wrap {
-  height: calc(100vh - 312px);
+  height: calc(100vh - 350px);
   padding: 0;
   overflow: hidden;
   text-align: center;
