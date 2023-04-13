@@ -62,11 +62,11 @@ const times = ref(60);
 
 let timer = null;
 const fetchCode = () => {
+  codeBtnLoading.value = true;
   getVerificationCodeForPass().then((res) => {
     if (res.code == 200) {
       antMessage.success(res.data);
     }
-    codeBtnLoading.value = true;
     timer = setInterval(() => {
       if (times.value == 0) {
         codeBtnLoading.value = false;
