@@ -87,9 +87,15 @@ export default {
       store.commit('session/updateDetail', null);
       store.commit('session/updateActive', sessionCode);
       await store.dispatch('session/getDetail', sessionCode);
+      
       store.commit('session/addToList', {
         sessionCode
       });
+      if(store.state.session.detail.parseFinish){
+        disabledInput.value = false
+      }else{
+        disabledInput.value = true
+      }
     };
 
     onBeforeMount(changeEffect);
