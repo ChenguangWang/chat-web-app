@@ -43,12 +43,12 @@ const onDrawerVisibleClose = () => {
   drawerVisible.value = false;
 };
 
-const activeSession = computed(()=> {
-   const active = store.state.session.active;
-   const list = store.state.session.list;
-   let findRes = list && list.find(item => item.sessionCode == active);
-   return findRes;
-}) 
+const activeSession = computed(() => {
+  const active = store.state.session.active;
+  const list = store.state.session.list;
+  let findRes = list && list.find((item) => item.sessionCode == active);
+  return findRes;
+});
 
 const setTitle = () => {
   if (router.currentRoute.value.meta) {
@@ -56,18 +56,28 @@ const setTitle = () => {
       case 'chat':
       case 'file':
         title.value = activeSession.value?.showTitle || '会话';
-      break;
+        break;
       default:
         title.value = router.currentRoute.value.meta.name;
         break;
     }
   }
-}
+};
 
 watch(
   activeSession,
   () => {
     setTitle();
+  },
+  { immediate: true }
+);
+
+watch(
+  () => router.currentRoute.value,
+  (val) => {
+    if (val.meta) {
+      setTitle();
+    }
   },
   { immediate: true }
 );

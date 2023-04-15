@@ -75,6 +75,7 @@ export default {
         antMessage.warning('请输入正确手机号');
         return;
       }
+      codeBtnLoading.value = true;
       const param = {
         phoneNumber: formState.username
       };
@@ -82,7 +83,6 @@ export default {
         if (res.code == 200) {
           antMessage.success(res.data);
         }
-        codeBtnLoading.value = true;
         timer = setInterval(() => {
           if (times.value == 0) {
             codeBtnLoading.value = false;
