@@ -49,6 +49,10 @@
       <div class="option-wrap-item" @click="clearAll">
         <clear-outlined /><span class="btn-text">清除会话</span>
       </div>
+      <div class="option-wrap-item" @click="routerChange('share')">
+        <share-alt-outlined />
+        <span class="btn-text">分享链接</span>
+      </div>
       <div class="option-wrap-item" @click="routerChange('userInfo')">
         <!-- <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i> -->
         <setting-outlined />
@@ -83,7 +87,8 @@ import {
   ClearOutlined,
   AccountBookOutlined,
   SettingOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  ShareAltOutlined
 } from '@ant-design/icons-vue';
 import defaultUser from '@/assets/default_user.jpg';
 import { useStore } from 'vuex';
@@ -96,7 +101,8 @@ export default {
     ClearOutlined,
     AccountBookOutlined,
     SettingOutlined,
-    LogoutOutlined
+    LogoutOutlined,
+    ShareAltOutlined
   },
   setup() {
     const store = useStore();
@@ -229,7 +235,7 @@ export default {
 }
 
 .session-wrap {
-  height: calc(100vh - 286px);
+  height: calc(100vh - 324px);
   padding: 0;
   overflow: hidden;
   text-align: center;

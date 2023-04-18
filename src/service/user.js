@@ -86,3 +86,14 @@ export const getUserInfo = (data) => {
     method: 'get'
   });
 };
+
+/**
+ * 获取分享链接
+ * @returns
+ */
+export const getShareUrl = () => {
+  return axios.request({
+    url: '/user/growth/code',
+    method: 'get'
+  });
+};

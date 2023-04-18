@@ -24,6 +24,14 @@ const router = createRouter({
           component: () => import('@/views/user-info/UserInfo.vue')
         },
         {
+          path: 'share',
+          name: 'share',
+          meta: {
+            name: '分享'
+          },
+          component: () => import('@/views/share/Share.vue')
+        },
+        {
           path: 'chat/:id',
           name: 'chat',
           meta: {
