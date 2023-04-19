@@ -24,25 +24,12 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import LoginForm from './components/LoginForm.vue';
 import PasswordForm from './components/PasswordForm.vue';
 import { ref } from 'vue';
 
-export default {
-  name: 'Login',
-  components: { LoginForm, PasswordForm },
-  setup() {
-    const activeKey = ref('2');
-    return {
-      activeKey
-    };
-  },
-  computed: {},
-  methods: {},
-  mounted() {
-  }
-};
+const activeKey = ref('2');
 </script>
 
 <style lang="less" scoped>

@@ -58,6 +58,11 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: () => import('@/views/login/Login.vue')
+    },
+    {
+      path: '/invitation/:shareCode',
+      name: 'shareLogin',
+      component: () => import('@/views/login/Login.vue')
     }
   ]
 });

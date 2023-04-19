@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import { reactive, ref, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { onMounted, reactive, ref } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { getVerificationCode, registerAndLogin } from '@/service/user.js';
 import { setToken } from '@/utils/auth';
 import { message as antMessage } from 'ant-design-vue';
@@ -40,7 +40,9 @@ import { message as antMessage } from 'ant-design-vue';
 export default {
   name: 'LoginForm',
   setup() {
+    const route = useRoute();
     const router = useRouter();
+    const shareCode = ref(undefined);
     const formState = reactive({
       username: '',
       verificationCode: '',
@@ -57,6 +59,9 @@ export default {
         phoneNumber: values.username,
         code: values.verificationCode
       };
+      if (shareCode.value) {
+        param['shareCode'] = shareCode.value;
+      }
       registerAndLogin(param).then((res) => {
         if (res.code == 200) {
           setToken(res.data.token);
@@ -94,6 +99,10 @@ export default {
         }, 1000);
       });
     };
+
+    onMounted(() => {
+      shareCode.value = route.params.shareCode;
+    });
 
     return {
       times,
