@@ -7,7 +7,7 @@
       </header>
       <a-row class="content-item">
         <a-col class="label" :span="6">分享链接</a-col>
-        <a-col :span="14">{{ shareData.url || '' }}</a-col>
+        <a-col :span="14" style="word-wrap: break-word">{{ shareData.url || '' }}</a-col>
         <a-col :span="4" class="operate-wrap">
           <span v-show="shareData.url" class="operate-btn" @click="copy">复制</span>
         </a-col>
@@ -63,8 +63,6 @@ header {
 }
 
 .content-item {
-  height: 46px;
-  line-height: 46px;
   font-size: 14px;
   border-bottom: 1px solid rgb(220, 220, 220);
   .label {
