@@ -13,6 +13,9 @@ const router = createRouter({
         {
           path: 'home',
           name: 'home',
+          meta: {
+            name: '首页'
+          },
           component: () => import('@/views/home/Home.vue')
         },
         {
@@ -27,7 +30,7 @@ const router = createRouter({
           path: 'share',
           name: 'share',
           meta: {
-            name: '分享'
+            name: '分享链接'
           },
           component: () => import('@/views/share/Share.vue')
         },
@@ -43,7 +46,7 @@ const router = createRouter({
           path: 'file/:id',
           name: 'file',
           meta: {
-            name: '会话'
+            name: '文件会话'
           },
           component: () => import('@/views/chat/File.vue')
         },
@@ -57,11 +60,17 @@ const router = createRouter({
     {
       path: '/login',
       name: 'login',
+      meta: {
+        name: '登录'
+      },
       component: () => import('@/views/login/Login.vue')
     },
     {
       path: '/invitation/:shareCode',
       name: 'shareLogin',
+      meta: {
+        name: '登录'
+      },
       component: () => import('@/views/login/Login.vue')
     }
   ]
