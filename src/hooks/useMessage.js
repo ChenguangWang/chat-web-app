@@ -22,7 +22,7 @@ export default () => {
     pageSize: 10,
     total: 0,
     loading: false
-  })
+  });
 
   watch(
     () => store.state.session.detail,
@@ -38,7 +38,7 @@ export default () => {
           } else {
             processHistory(history.data);
           }
-          if(messages.length == 0) {
+          if (messages.length == 0) {
             messages[0] = {
               id: Date.now(),
               author: 'AI',
@@ -67,21 +67,21 @@ export default () => {
       }
     }
   );
-  
-  onMounted(()=>{
-    chatWrapDom.value?.addEventListener('scroll', scrollChange, true)
-  })
+
+  onMounted(() => {
+    chatWrapDom.value?.addEventListener('scroll', scrollChange, true);
+  });
 
   onBeforeRouteUpdate(() => {
     controller.value?.abort();
-    disabledInput.value = false
+    disabledInput.value = false;
   });
 
   onBeforeUnmount(() => {
-    chatWrapDom.value?.addEventListener('scroll', scrollChange, true)
+    chatWrapDom.value?.addEventListener('scroll', scrollChange, true);
 
     controller.value?.abort();
-    disabledInput.value = false
+    disabledInput.value = false;
   });
 
   /**
@@ -90,24 +90,24 @@ export default () => {
   const scrollChange = async () => {
     const scrollTop = chatWrapDom.value.scrollTop;
 
-    if(scrollTop == 0 && !historyParams.loading) { 
-      if(historyParams.total > (historyParams.pageNum - 1) * historyParams.pageSize) {
+    if (scrollTop == 0 && !historyParams.loading) {
+      if (historyParams.total > (historyParams.pageNum - 1) * historyParams.pageSize) {
         historyParams.loading = true;
         const param = {
           pageNum: historyParams.pageNum,
           pageSize: historyParams.pageSize,
           sessionCode: store.state.session.active
-        }
+        };
         const result = await chatHistory(param);
         historyParams.loading = false;
-        if(result.code == 200) {
-          historyParams.pageNum++ ;
+        if (result.code == 200) {
+          historyParams.pageNum++;
           historyParams.total = result.data.total;
           processHistory(result.data.data, true);
         }
       }
     }
-  }
+  };
 
   /**
    * 滚动到底部
@@ -125,33 +125,33 @@ export default () => {
 
   /**
    * 处理历史消息
-   * @param {*} data 
-   * @param {*} isConcat 
+   * @param {*} data
+   * @param {*} isConcat
    */
-  const processHistory = (data,isConcat) => {
-    if(!isConcat) {
+  const processHistory = (data, isConcat) => {
+    if (!isConcat) {
       // 清空message
-      messages.splice(0, messages.length)
+      messages.splice(0, messages.length);
     }
     data = data.reverse();
-    const historyData = data.map(item => {
+    const historyData = data.map((item) => {
       return {
         id: item.chatTime,
         author: item.roleType == 1 ? 'AI' : 'User',
         text: item.chatContext,
         isSent: item.roleType == 2,
         avatar: item.roleType == 1 ? systemAvatar : defaultUserAvatar
-      }
-    })
-    if(historyData.length > 0) {
-      if(isConcat){
+      };
+    });
+    if (historyData.length > 0) {
+      if (isConcat) {
         messages.unshift(...historyData);
-      }else {
+      } else {
         messages.push(...historyData);
         scrollBottom();
       }
     }
-  }
+  };
 
   /**
    * 复制信息
@@ -180,9 +180,10 @@ export default () => {
       avatar: defaultUserAvatar
     });
 
-    nextTick(() => {
-      newMessage.value = '';
-    });
+    setTimeout(() => {
+      newMessage.value = undefined;
+    }, 100);
+
     disabledInput.value = true;
 
     let responseMsg = {
@@ -222,7 +223,7 @@ export default () => {
             switch (code) {
               case 40000:
                 antMessage.warning('登录超时');
-                router.push({name: 'login'});
+                router.push({ name: 'login' });
                 break;
               default:
                 msgStreamData = msg;
@@ -235,10 +236,10 @@ export default () => {
           messages[newLength - 1]['text'] = msgStreamData;
         },
         onerror: (err) => {
-          console.log('message onerror====>>',err);
-          disabledInput.value = false
+          console.log('message onerror====>>', err);
+          disabledInput.value = false;
           controller.value.abort();
-        },
+        }
       }
     );
   };

@@ -2,7 +2,7 @@
   <div class="chat-room">
     <section class="chat-wrap" ref="chatWrapDom">
       <div class="history-loading-wrap">
-        <a-spin v-if="historyParams.loading"/>
+        <a-spin v-if="historyParams.loading" />
       </div>
       <ul class="chat-messages">
         <li
@@ -33,8 +33,8 @@
       <!-- @pressEnter 回车回调 -->
       <a-textarea
         v-model:value="newMessage"
-        placeholder="输入消息，Ctrl + Enter 发送"
-        @keyup.ctrl.enter="sendMessage"
+        placeholder="输入消息，Enter 发送"
+        @keyup.enter.exact="sendMessage"
       />
       <a-button class="send-btn" type="primary" shape="round" @click="sendMessage">
         <template #icon>
@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import { onMounted, onBeforeUnmount, ref, onBeforeMount, watch } from 'vue';
+import { onBeforeMount, watch } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
@@ -66,10 +66,11 @@ export default {
     MdEditor
   },
   setup() {
-    const store = useStore()
+    const store = useStore();
     const route = useRoute();
     const loadingImg = loadingGIF;
-    let {sendMessage, messages, disabledInput, newMessage, chatWrapDom, historyParams} = useMessage()
+    let { sendMessage, messages, disabledInput, newMessage, chatWrapDom, historyParams } =
+      useMessage();
 
     /**
      * 复制信息
@@ -80,10 +81,9 @@ export default {
       });
     };
 
-
     /**
      * 获取会话详情
-     * @param {*} id 
+     * @param {*} id
      */
     const changeEffect = async (id) => {
       let sessionCode = id || route.params.id;
@@ -91,32 +91,39 @@ export default {
       store.dispatch('session/getDetail', sessionCode);
     };
 
+    const test = () => {
+      console.log('=====>>>');
+    };
+
     /**
      * 会话详情触发
      */
     onBeforeMount(() => {
       store.commit('session/updateDetail', null);
-      changeEffect()
+      changeEffect();
     });
 
     onBeforeRouteUpdate(function (to, from) {
       store.commit('session/updateDetail', null);
-      messages.shift(0, messages.length)
+      messages.shift(0, messages.length);
       changeEffect(to.params.id);
     });
 
-    
-    watch(() => store.state.session.list, () => {
-      let sessionCode = route.params.id;
+    watch(
+      () => store.state.session.list,
+      () => {
+        let sessionCode = route.params.id;
         store.commit('session/addToList', {
-            sessionCode
+          sessionCode
         });
-    })
+      }
+    );
     if (route.query.msg) {
-      messages.shift(0, messages.length)
+      messages.shift(0, messages.length);
     }
 
     return {
+      test,
       loadingImg,
       historyParams,
       messages,

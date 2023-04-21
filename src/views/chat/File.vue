@@ -2,13 +2,15 @@
   <div class="chat-room">
     <div class="detail-info" v-if="detail !== null">
       <h5>
-        {{ !detail.parseFinish && progress < 100 ? '解析中:' + progress + '%' : '解析完成' }} 【<span class="detail-info-title" :title="detail?.title">{{ detail?.title }}</span>】
+        {{ !detail.parseFinish && progress < 100 ? '解析中:' + progress + '%' : '解析完成' }}
+        【<span class="detail-info-title" :title="detail?.title">{{ detail?.title }}</span
+        >】
       </h5>
       <p :style="{ width: !detail.parseFinish ? progress + '%' : '100%' }"></p>
     </div>
     <section class="chat-wrap" ref="chatWrapDom">
       <div class="history-loading-wrap">
-        <a-spin v-if="historyParams.loading"/>
+        <a-spin v-if="historyParams.loading" />
       </div>
       <ul class="chat-messages">
         <li
@@ -39,10 +41,16 @@
       <!-- @pressEnter 回车回调 -->
       <a-textarea
         v-model:value="newMessage"
-        placeholder="输入消息，Ctrl + Enter 发送"
-        @keyup.ctrl.enter="sendMessage"
+        placeholder="输入消息，Enter 发送"
+        @keyup.enter.exact="sendMessage"
       />
-      <a-button :disabled="disabledInput" class="send-btn" type="primary" shape="round" @click="sendMessage">
+      <a-button
+        :disabled="disabledInput"
+        class="send-btn"
+        type="primary"
+        shape="round"
+        @click="sendMessage"
+      >
         <template #icon>
           <send-outlined />
         </template>
@@ -53,11 +61,7 @@
 </template>
 
 <script>
-import {
-  computed,
-  watch,
-  onBeforeMount
-} from 'vue';
+import { computed, watch, onBeforeMount } from 'vue';
 import { useRoute, onBeforeRouteUpdate } from 'vue-router';
 import MdEditor from 'md-editor-v3';
 import 'md-editor-v3/lib/style.css';
@@ -80,37 +84,46 @@ export default {
     const loadingImg = loadingGIF;
     let store = useStore();
     let { progress } = useSchedule();
-    let { sendMessage, messages, disabledInput, newMessage, copyMessage, chatWrapDom, historyParams } = useMessage();
+    let {
+      sendMessage,
+      messages,
+      disabledInput,
+      newMessage,
+      copyMessage,
+      chatWrapDom,
+      historyParams
+    } = useMessage();
 
     const changeEffect = async (to) => {
       let sessionCode = to ? to.params.id : route.params.id;
       store.commit('session/updateDetail', null);
       store.commit('session/updateActive', sessionCode);
       await store.dispatch('session/getDetail', sessionCode);
-      
+
       store.commit('session/addToList', {
         sessionCode
       });
-      if(store.state.session.detail.parseFinish){
-        disabledInput.value = false
-      }else{
-        disabledInput.value = true
+      if (store.state.session.detail.parseFinish) {
+        disabledInput.value = false;
+      } else {
+        disabledInput.value = true;
       }
     };
 
     onBeforeMount(changeEffect);
     onBeforeRouteUpdate(changeEffect);
 
-    watch(() => progress.value, () => {
+    watch(
+      () => progress.value,
+      () => {
         if (progress.value == 100) {
           store.dispatch('session/getDetail', route.params.id);
-          disabledInput.value = false
-        }else{
-          disabledInput.value = true
+          disabledInput.value = false;
+        } else {
+          disabledInput.value = true;
         }
       }
     );
-
 
     return {
       loadingImg,
