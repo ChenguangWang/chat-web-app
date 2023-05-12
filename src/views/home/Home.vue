@@ -44,6 +44,10 @@
             <send-outlined @click="createSession()" />
           </template>
         </a-input> -->
+        <a-select  defaultValue="1" v-model="currentSessionType" @change="changeSessionType" size="large">
+          <a-select-option value="1">GPT-3.5</a-select-option>
+          <a-select-option value="3">GPT-4.0</a-select-option>
+        </a-select>
         <a-input-search
           size="large"
           v-model:value="inputValue"
@@ -79,6 +83,7 @@ export default {
     const dragEffect = ref(null);
     const dragContainer = ref(null);
     const store = useStore();
+    const currentSessionType = ref('1')
     const state = reactive({
       uploading: false,
       uploadProgress: 0,
@@ -150,9 +155,15 @@ export default {
       document.getElementById('shapesvg').style.height = window.innerHeight - 20 + 'px';
     });
 
+    const changeSessionType = (value) => {
+      console.log('changeSessionType', value)
+      currentSessionType.value = value
+    }
+
     const createSession = (data) => {
       const startMsg = data || inputValue.value;
       inputLoading.value = true;
+      console.log('defaultValue', currentSessionType)
       addSession({
         message: startMsg,
         sessionType: 1 // 普通对话
@@ -179,6 +190,8 @@ export default {
       dragContainer,
       dragEffect,
       state,
+      currentSessionType,
+      changeSessionType,
       createSession
     };
   }
@@ -239,6 +252,7 @@ export default {
   }
   .input-wrap {
     position: absolute;
+    display: flex;
     bottom: 0;
     left: 50%;
     transform: translate(-50%);
