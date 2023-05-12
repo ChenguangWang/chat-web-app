@@ -32,7 +32,7 @@ export default {
   setup(props) {
     const state = reactive({
       messages: [],
-      newMessage: ''
+      newMessage: '',
     });
 
     function sendMessage() {
