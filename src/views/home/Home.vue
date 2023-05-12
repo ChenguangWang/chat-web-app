@@ -14,7 +14,7 @@
       </div>
     </div>
     <section class="chat-container" :style="{ opacity: state.uploading ? 0.1 : 1 }">
-      <h1 class="title">智能问答机器人</h1>
+      <h1 class="title">TalkBot 智能问答机器人</h1>
       <div class="home-wrap-guide">
         <div class="guide-item-wrap" v-for="example in exampleData" :key="example.label">
           <h2>
