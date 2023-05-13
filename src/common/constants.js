@@ -16,5 +16,5 @@ export const USER_SPECICAL_INFO = 'userSpecialInfo';
 
 export const SESSIONTYPE = {
     chat: 1,
-    file: 2,
+    file: 3,
 }
