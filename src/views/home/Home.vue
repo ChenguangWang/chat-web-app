@@ -90,68 +90,8 @@ export default {
       uploadTip: '松开上传文件'
     });
 
-    function dragEndHandler(e) {
-      e.preventDefault();
-      const dragEffectDom = dragEffect.value;
-      dragEffectDom.classList.remove('anim');
-      state.uploading = false;
-      // console.log('dragEndHandler',dragEffectDom.classList);
-      return false;
-    }
-
-    function dragMoveHandler(e) {
-      e.preventDefault();
-      const dragEffectDom = dragEffect.value;
-      dragEffectDom.classList.add('anim');
-      state.uploading = true;
-      return false;
-    }
-
-    async function dropHandler(e) {
-      e.preventDefault();
-      let file = e.dataTransfer.files[0];
-
-      console.log(
-        `File is ${[file.name, file.size, file.type, file.lastModified].join(' ')}`,
-        file instanceof FormData
-      );
-      if (file.size === 0 || file.type !== 'application/pdf') {
-        state.uploading = false;
-        const dragEffectDom = dragEffect.value;
-        dragEffectDom.classList.remove('anim');
-        message.warning('请上传pdf文件');
-      } else {
-        let formData = new FormData();
-        formData.append('file', file);
-        try {
-          const { code, data } = await uploadFile(formData, (res) => {
-            state.uploadProgress = parseInt(res.progress * 100);
-            state.uploadTip = '正在上传...';
-          });
-          if (code == 200) {
-            console.log('upload data', data);
-            setTimeout(() => {
-              router.push({
-                name: 'file',
-                params: {
-                  id: data.session
-                }
-              });
-            }, 500);
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-
-      return false;
-    }
-
     onMounted(() => {
       const dragContainerDom = dragContainer.value;
-      dragContainerDom.ondragover = dragMoveHandler;
-      dragContainerDom.ondragleave = dragEndHandler;
-      dragContainerDom.ondrop = dropHandler;
       document.getElementById('shapesvg').style.height = window.innerHeight - 20 + 'px';
     });
 

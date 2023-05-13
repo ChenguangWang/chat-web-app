@@ -33,7 +33,7 @@
       <!-- @pressEnter 回车回调 -->
       <a-textarea
         v-model:value="newMessage"
-        placeholder="输入消息，Enter 发送"
+        placeholder="输入消息，Enter 发送 ; Shift + Enter 换行"
         @keyup.enter.exact="sendMessage"
       />
       <a-button class="send-btn" type="primary" shape="round" @click="sendMessage">
