@@ -88,12 +88,14 @@ export default {
     const changeEffect = async (id) => {
       let sessionCode = id || route.params.id;
       store.commit('session/updateActive', sessionCode);
-      store.dispatch('session/getDetail', sessionCode);
+      console.log('addToList detail')
+      await store.dispatch('session/getDetail', sessionCode);
+      store.commit('session/addToList', {sessionCode})
     };
 
-    const test = () => {
-      console.log('=====>>>');
-    };
+    // const test = () => {
+    //   console.log('=====>>>');
+    // };
 
     /**
      * 会话详情触发
@@ -123,7 +125,7 @@ export default {
     }
 
     return {
-      test,
+      // test,
       loadingImg,
       historyParams,
       messages,

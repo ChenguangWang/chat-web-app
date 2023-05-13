@@ -31,7 +31,7 @@ export default () => {
       if (!detail) return messages.shift(1, messages.length);
       if (detail) {
         let { history } = detail;
-        if (detail.sessionType === SESSIONTYPE.chat) {
+        // if (detail.sessionType === SESSIONTYPE.chat) {
           if (history.total == 0 && route.query.msg) {
             newMessage.value = route.query.msg || detail.title;
             sendMessage();
@@ -47,20 +47,20 @@ export default () => {
               avatar: systemAvatar
             };
           }
-        } else {
-          // 后期需要处理message list;
-          if (history.total == 0 && detail.parseFinish) {
-            messages[0] = {
-              id: Date.now(),
-              author: 'AI',
-              text: detail.mainIdea,
-              isSent: false,
-              avatar: systemAvatar
-            };
-          } else {
-            processHistory(history.data);
-          }
-        }
+        // } else {
+        //   // 后期需要处理message list;
+        //   if (history.total == 0 && detail.parseFinish) {
+        //     messages[0] = {
+        //       id: Date.now(),
+        //       author: 'AI',
+        //       text: detail.mainIdea,
+        //       isSent: false,
+        //       avatar: systemAvatar
+        //     };
+        //   } else {
+        //     processHistory(history.data);
+        //   }
+        // }
         historyParams.pageNum = history.pageNum + 1;
         historyParams.pageSize = history.pageSize;
         historyParams.total = history.total;
