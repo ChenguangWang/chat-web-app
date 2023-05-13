@@ -123,7 +123,6 @@ export default {
     if (route.query.msg) {
       messages.shift(0, messages.length);
     }
-
     return {
       // test,
       loadingImg,
