@@ -106,7 +106,7 @@ export default {
       console.log('defaultValue', currentSessionType)
       addSession({
         message: startMsg,
-        sessionType: currentSessionType.value // 普通对话
+        sessionType: currentSessionType.value*1 // 普通对话
       }).then((res) => {
         inputLoading.value = false;
         if (res.code == 200) {
