@@ -5,7 +5,7 @@
     <plus-outlined class="m-create-session" @click="toHome" />
     <a-drawer
       :width="200"
-      bodyStyle="padding: 0"
+      :bodyStyle="{ padding: 0 }"
       placement="left"
       :closable="false"
       :visible="drawerVisible"
