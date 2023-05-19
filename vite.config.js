@@ -1,13 +1,15 @@
 import { fileURLToPath, URL } from 'node:url';
-const path = require('path');
-
+import legacy from '@vitejs/plugin-legacy'
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+const path = require('path');
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: 'page',
-  plugins: [vue()],
+  plugins: [vue(),legacy({
+    targets: ['defaults', 'not IE 11'],
+  })],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
@@ -28,14 +30,16 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/sse': {
-        target: 'http://47.88.11.59:8081', // 代理的目标地址
+        target: 'http://47.88.11.59:8080', // 代理的目标地址
+        // target: 'http://localhost:8080',
         ws: false,
         changeOrigin: true,
         compress:false
       },
       '/api': {
         // target: 'https://hi-chat.com.cn', // 代理的目标地址
-        target: 'http://47.88.11.59:8081', // 代理的目标地址
+        target: 'http://47.88.11.59:8080', // 代理的目标地址
+        // target: 'http://localhost:8080',
         ws: false,
         changeOrigin: true
       }

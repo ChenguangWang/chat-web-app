@@ -33,7 +33,7 @@
       <!-- @pressEnter 回车回调 -->
       <a-textarea
         v-model:value="newMessage"
-        placeholder="输入消息，Enter 发送"
+        placeholder="输入消息，Enter 发送 ; Shift + Enter 换行"
         @keyup.enter.exact="sendMessage"
       />
       <a-button class="send-btn" type="primary" shape="round" @click="sendMessage">
@@ -88,12 +88,14 @@ export default {
     const changeEffect = async (id) => {
       let sessionCode = id || route.params.id;
       store.commit('session/updateActive', sessionCode);
-      store.dispatch('session/getDetail', sessionCode);
+      console.log('addToList detail')
+      await store.dispatch('session/getDetail', sessionCode);
+      store.commit('session/addToList', {sessionCode})
     };
 
-    const test = () => {
-      console.log('=====>>>');
-    };
+    // const test = () => {
+    //   console.log('=====>>>');
+    // };
 
     /**
      * 会话详情触发
@@ -121,9 +123,8 @@ export default {
     if (route.query.msg) {
       messages.shift(0, messages.length);
     }
-
     return {
-      test,
+      // test,
       loadingImg,
       historyParams,
       messages,

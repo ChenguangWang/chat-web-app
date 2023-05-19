@@ -14,7 +14,7 @@
       </div>
     </div>
     <section class="chat-container" :style="{ opacity: state.uploading ? 0.1 : 1 }">
-      <h1 class="title">智能问答机器人</h1>
+      <h1 class="title">TalkBot 智能问答机器人</h1>
       <div class="home-wrap-guide">
         <div class="guide-item-wrap" v-for="example in exampleData" :key="example.label">
           <h2>
@@ -44,6 +44,10 @@
             <send-outlined @click="createSession()" />
           </template>
         </a-input> -->
+        <a-select  defaultValue="1" v-model="currentSessionType" @change="changeSessionType" size="large">
+          <a-select-option value="1">GPT-3.5</a-select-option>
+          <a-select-option value="3">GPT-4.0</a-select-option>
+        </a-select>
         <a-input-search
           size="large"
           v-model:value="inputValue"
@@ -79,83 +83,30 @@ export default {
     const dragEffect = ref(null);
     const dragContainer = ref(null);
     const store = useStore();
+    const currentSessionType = ref('1')
     const state = reactive({
       uploading: false,
       uploadProgress: 0,
       uploadTip: '松开上传文件'
     });
 
-    function dragEndHandler(e) {
-      e.preventDefault();
-      const dragEffectDom = dragEffect.value;
-      dragEffectDom.classList.remove('anim');
-      state.uploading = false;
-      // console.log('dragEndHandler',dragEffectDom.classList);
-      return false;
-    }
-
-    function dragMoveHandler(e) {
-      e.preventDefault();
-      const dragEffectDom = dragEffect.value;
-      dragEffectDom.classList.add('anim');
-      state.uploading = true;
-      return false;
-    }
-
-    async function dropHandler(e) {
-      e.preventDefault();
-      let file = e.dataTransfer.files[0];
-
-      console.log(
-        `File is ${[file.name, file.size, file.type, file.lastModified].join(' ')}`,
-        file instanceof FormData
-      );
-      if (file.size === 0 || file.type !== 'application/pdf') {
-        state.uploading = false;
-        const dragEffectDom = dragEffect.value;
-        dragEffectDom.classList.remove('anim');
-        message.warning('请上传pdf文件');
-      } else {
-        let formData = new FormData();
-        formData.append('file', file);
-        try {
-          const { code, data } = await uploadFile(formData, (res) => {
-            state.uploadProgress = parseInt(res.progress * 100);
-            state.uploadTip = '正在上传...';
-          });
-          if (code == 200) {
-            console.log('upload data', data);
-            setTimeout(() => {
-              router.push({
-                name: 'file',
-                params: {
-                  id: data.session
-                }
-              });
-            }, 500);
-          }
-        } catch (err) {
-          console.log(err);
-        }
-      }
-
-      return false;
-    }
-
     onMounted(() => {
       const dragContainerDom = dragContainer.value;
-      dragContainerDom.ondragover = dragMoveHandler;
-      dragContainerDom.ondragleave = dragEndHandler;
-      dragContainerDom.ondrop = dropHandler;
       document.getElementById('shapesvg').style.height = window.innerHeight - 20 + 'px';
     });
+
+    const changeSessionType = (value) => {
+      console.log('changeSessionType', value)
+      currentSessionType.value = value
+    }
 
     const createSession = (data) => {
       const startMsg = data || inputValue.value;
       inputLoading.value = true;
+      console.log('defaultValue', currentSessionType)
       addSession({
         message: startMsg,
-        sessionType: 1 // 普通对话
+        sessionType: currentSessionType.value*1 // 普通对话
       }).then((res) => {
         inputLoading.value = false;
         if (res.code == 200) {
@@ -179,6 +130,8 @@ export default {
       dragContainer,
       dragEffect,
       state,
+      currentSessionType,
+      changeSessionType,
       createSession
     };
   }
@@ -239,6 +192,7 @@ export default {
   }
   .input-wrap {
     position: absolute;
+    display: flex;
     bottom: 0;
     left: 50%;
     transform: translate(-50%);

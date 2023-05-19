@@ -37,7 +37,7 @@
             "
           >
             <p @click="chooseSession(item)" :title="item.showTitle">
-              <i :class="item.sessionType === 2 ? 'iconfont icon-pdf' : 'iconfont icon-duihua'"></i>
+              <i :class="item.sessionType === 3 ? 'iconfont icon-pdf' : 'iconfont icon-duihua'"></i>
               {{ item.showTitle }}
             </p>
             <i class="iconfont icon-quxiao" @click="deleteSession(item)"></i>
