@@ -72,6 +72,7 @@
     <a-modal v-model:visible="callMeModal" :width="400" title="联系我们" :footer="null">
       <div style="text-align: center">
         <img src="/src/assets/call-me-qrcode.jpg" style="width: 100%" alt="" />
+        <span @click="openFrame">付费</span>
       </div>
     </a-modal>
   </div>
@@ -184,6 +185,11 @@ export default {
       removeToken();
       router.push({ name: 'login' });
     };
+
+    const openFrame = () => {
+      store.commit('payment/updatePaymentModal', true);
+    };
+
     return {
       hasToken,
       sessions: computed(() => {
@@ -199,7 +205,8 @@ export default {
       routerChange,
       deleteSession,
       createSession,
-      chooseSession
+      chooseSession,
+      openFrame
     };
   }
 };
