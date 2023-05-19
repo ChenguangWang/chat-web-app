@@ -12,6 +12,7 @@
       </a-layout-content>
     </a-layout>
   </a-layout>
+  <PaymentModal />
 </template>
 
 <script setup>
@@ -19,6 +20,7 @@ import { RouterView, useRouter } from 'vue-router';
 import SideWrap from '@/components/side-wrap/SideWrap.vue';
 import Header from '@/components/header/Header.vue';
 import { ref, watch } from 'vue';
+import PaymentModal from '@/components/payment-modal/PaymentModal.vue';
 
 const router = useRouter();
 const showHeader = ref(true);
