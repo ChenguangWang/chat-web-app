@@ -97,3 +97,27 @@ export const getShareUrl = () => {
     method: 'get'
   });
 };
+
+/**
+ * 获取用户流量详情
+ * @returns
+ */
+export const getUserFlow = () => {
+  return axios.request({
+    baseURL: '/pay-service/api',
+    url: '/user/flow',
+    method: 'get'
+  });
+};
+
+/**
+ * 获取用户生效商品
+ * @returns
+ */
+export const getUserProduct = () => {
+  return axios.request({
+    baseURL: '/pay-service/api',
+    url: '/user/product',
+    method: 'get'
+  });
+};

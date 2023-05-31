@@ -56,7 +56,7 @@
       <div class="option-wrap-item" @click="routerChange('userInfo')">
         <!-- <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i> -->
         <setting-outlined />
-        <span class="btn-text">系统设置</span>
+        <span class="btn-text">用户信息</span>
       </div>
       <div class="option-wrap-item" @click="callMe">
         <i class="iconfont icon-lianxiwomen" style="font-size: 12px"></i>
@@ -72,7 +72,6 @@
     <a-modal v-model:visible="callMeModal" :width="400" title="联系我们" :footer="null">
       <div style="text-align: center">
         <img src="/src/assets/call-me-qrcode.jpg" style="width: 100%" alt="" />
-        <span @click="openFrame">付费</span>
       </div>
     </a-modal>
   </div>
@@ -186,10 +185,6 @@ export default {
       router.push({ name: 'login' });
     };
 
-    const openFrame = () => {
-      store.commit('payment/updatePaymentModal', true);
-    };
-
     return {
       hasToken,
       sessions: computed(() => {
@@ -205,8 +200,7 @@ export default {
       routerChange,
       deleteSession,
       createSession,
-      chooseSession,
-      openFrame
+      chooseSession
     };
   }
 };

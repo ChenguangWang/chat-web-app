@@ -37,6 +37,71 @@
         </a-col>
       </a-row>
     </section>
+    <section v-if="userFlow">
+      <header>
+        <div class="title-icon"></div>
+        <h4>流量详情</h4>
+      </header>
+      <a-row class="content-item" v-if="userFlow.pdfPageTotal" :wrap="true">
+        <a-col class="label" :span="6">pdf页数</a-col>
+        <a-col :span="14">
+          <a-progress :percent="(userFlow.pdfPageLeft / userFlow.pdfPageTotal) * 100" />
+        </a-col>
+        <a-col :span="4">
+          {{ userFlow.pdfPageLeft }}
+        </a-col>
+      </a-row>
+      <a-row class="content-item" v-if="userFlow.pdfWordTotal" :wrap="true">
+        <a-col class="label" :span="6">pdf字数</a-col>
+        <a-col :span="14">
+          <a-progress :percent="(userFlow.pdfWordLeft / userFlow.pdfWordTotal) * 100" />
+        </a-col>
+        <a-col :span="4">
+          {{ userFlow.pdfWordLeft }}
+        </a-col>
+      </a-row>
+      <a-row class="content-item" v-if="userFlow.sessionTotal" :wrap="true">
+        <a-col class="label" :span="6">session</a-col>
+        <a-col :span="14">
+          <a-progress :percent="(userFlow.sessionLeft / userFlow.sessionTotal) * 100" />
+        </a-col>
+        <a-col :span="4">
+          {{ userFlow.sessionLeft }}
+        </a-col>
+      </a-row>
+      <a-row class="content-item" v-if="userFlow.tokenTotal" :wrap="true">
+        <a-col class="label" :span="6">token</a-col>
+        <a-col :span="14">
+          <a-progress :percent="(userFlow.tokenLeft / userFlow.tokenTotal) * 100" />
+        </a-col>
+        <a-col :span="4">
+          {{ userFlow.tokenLeft }}
+        </a-col>
+      </a-row>
+    </section>
+    <section>
+      <header>
+        <div class="title-icon"></div>
+        <h4>生效商品</h4>
+      </header>
+      <a-descriptions :labelStyle="{ 'padding-left': '14px', 'font-weight': 500 }">
+        <a-descriptions-item label="商品名称">{{ userProduct.name }}</a-descriptions-item>
+        <a-descriptions-item label="PDF页数">{{ userProduct.pdfPageLimit }}</a-descriptions-item>
+        <a-descriptions-item label="PDF字数">{{ userProduct.pdfWordLimit }}</a-descriptions-item>
+        <a-descriptions-item label="session数量">
+          {{ userProduct.sessionLimit }}
+        </a-descriptions-item>
+        <a-descriptions-item label="token数量	">
+          {{ userProduct.tokenLimit }}
+        </a-descriptions-item>
+        <a-descriptions-item label="商品价格">
+          ￥{{ userProduct.price / 100 }}
+        </a-descriptions-item>
+        <a-descriptions-item label="有效期">
+          {{ userProduct.expiredDays || 0 }} 天
+        </a-descriptions-item>
+      </a-descriptions>
+    </section>
 
     <a-modal v-model:visible="showModal" :width="400" :title="modalTitle" :footer="null">
       <PasswordForm
@@ -51,7 +116,13 @@
 <script setup>
 import { defineComponent, onMounted, reactive, ref, watch } from 'vue';
 import { message as antMessage } from 'ant-design-vue';
-import { getVerificationCodeForPass, modifyPassword, getUserInfo } from '@/service/user.js';
+import {
+  getVerificationCodeForPass,
+  modifyPassword,
+  getUserInfo,
+  getUserFlow,
+  getUserProduct
+} from '@/service/user.js';
 import { useRouter } from 'vue-router';
 import PasswordForm from './components/PasswordForm.vue';
 import AccountForm from './components/AccountForm.vue';
@@ -68,6 +139,11 @@ let userInfo = reactive({
   userAccount: ''
 });
 
+// 用户生效产品
+let userProduct = ref({});
+// 用户流量
+let userFlow = ref(null);
+
 const openModal = (type) => {
   showModal.value = true;
   modalTitle.value = type == 'account' ? '修改帐号' : '修改密码';
@@ -80,6 +156,17 @@ onMounted(async () => {
     userInfo.phoneNumber = userRes.data.phoneNumber;
     userInfo.userAccount = userRes.data.userAccount;
   }
+  getUserFlow().then((res) => {
+    // TODO：返回啥也没
+    if (res.code == 200) {
+      userFlow.value = res.data;
+    }
+  });
+  getUserProduct().then((res) => {
+    if (res.code == 200) {
+      userProduct.value = res.data;
+    }
+  });
 });
 </script>
 
