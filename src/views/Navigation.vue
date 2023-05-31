@@ -58,6 +58,10 @@ watch(
   font-weight: 600;
 }
 
+.ant-layout-content {
+  overflow: scroll;
+}
+
 @media only screen and (max-width: 768px) {
   .ant-layout-sider {
     display: none;

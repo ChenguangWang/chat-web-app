@@ -22,7 +22,9 @@
 import { getToken } from '@/utils/auth';
 import { useStore } from 'vuex';
 import { onMounted, ref, watch, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 
+const router = useRouter();
 const store = useStore();
 const src = ref('');
 const iframeModal = ref(false);
@@ -34,6 +36,7 @@ const openFrame = () => {
 const closeIframeModal = () => {
   iframeModal.value = false;
   store.commit('payment/updatePaymentModal', false);
+  router.push({ name: 'userInfo' });
 };
 /**
  * 支付成功回调
@@ -47,8 +50,7 @@ const iframeMsgHandler = (event) => {
   }
   switch (msg) {
     case 'paymentSuccess':
-      iframeModal.value = false;
-      router.push({ name: 'userInfo' });
+      closeIframeModal();
       break;
     default:
       break;

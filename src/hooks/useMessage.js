@@ -1,12 +1,12 @@
-import { onMounted, ref, watch, reactive, nextTick, onBeforeUnmount } from 'vue';
+import { onMounted, ref, watch, reactive, nextTick, onBeforeUnmount, createVNode } from 'vue';
 import { useRoute, onBeforeRouteUpdate, useRouter } from 'vue-router';
 import { useStore } from 'vuex';
-import { message as antMessage } from 'ant-design-vue';
+import { message as antMessage, Modal } from 'ant-design-vue';
 import { copyText } from '@/utils/tools.js';
 import systemAvatar from '@/assets/logo.jpg';
 import defaultUserAvatar from '@/assets/default_user.jpg';
 import { streamChat, chatHistory } from '@/service/chat';
-import { SESSIONTYPE } from '@/common/constants';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 
 export default () => {
   const route = useRoute();
@@ -31,22 +31,21 @@ export default () => {
       if (!detail) return messages.shift(1, messages.length);
       if (detail) {
         let { history } = detail;
-        // if (detail.sessionType === SESSIONTYPE.chat) {
-          if (history.total == 0 && route.query.msg) {
-            newMessage.value = route.query.msg || detail.title;
-            sendMessage();
-          } else {
-            processHistory(history.data);
-          }
-          if (messages.length == 0) {
-            messages[0] = {
-              id: Date.now(),
-              author: 'AI',
-              text: `你好！我是基于人工智能诞生的AI对话助手。\n我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
-              isSent: false,
-              avatar: systemAvatar
-            };
-          }
+        if (history.total == 0 && route.query.msg) {
+          newMessage.value = route.query.msg || detail.title;
+          sendMessage();
+        } else {
+          processHistory(history.data);
+        }
+        if (messages.length == 0) {
+          messages[0] = {
+            id: Date.now(),
+            author: 'AI',
+            text: `你好！我是基于人工智能诞生的AI对话助手。\n我可以告诉你菜谱、帮你写作文、查问题、拟邮件、解决难懂的题目，并且还可以基于上下文与你进行深入讨论。\n`,
+            isSent: false,
+            avatar: systemAvatar
+          };
+        }
         // } else {
         //   // 后期需要处理message list;
         //   if (history.total == 0 && detail.parseFinish) {
@@ -224,6 +223,22 @@ export default () => {
               case 40000:
                 antMessage.warning('登录超时');
                 router.push({ name: 'login' });
+                break;
+              case 20000:
+                controller.value.abort();
+                Modal.confirm({
+                  title: '提醒',
+                  icon: createVNode(ExclamationCircleOutlined),
+                  content: '您没流量了，是否购买流量',
+                  okText: '是',
+                  cancelText: '否',
+                  onOk: () => {
+                    store.commit('payment/updatePaymentModal', true);
+                  },
+                  onCancel: () => {
+                    router.push({ name: 'home' });
+                  }
+                });
                 break;
               default:
                 msgStreamData = msg;
